@@ -1,2 +1,8 @@
-# my-website
-Its my website! Hosted on Nest, a free website host run by Hack Club!
+# My Website
+It's my website, my little corner of the internet!
+
+## Hosting
+
+Find my site here: (TODO: Add URL me)
+
+Hosted on Nest with a cron job to clone from the current repo. Nest is a free website host run by Hack Club! Free for anyone under 18, anywhere, everywhere. Google "hack club" for more!
