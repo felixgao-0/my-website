@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "repl-nix-system-monitor"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+packages = [{include = "repl_nix_system_monitor"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+psutil = "^6.0.0"
+flask = "^3.0.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
