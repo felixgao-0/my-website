@@ -3,22 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <title>Resource Monitor & Vitals</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
 </head>
 <body>
     <h1>Resource Monitor & Vitals</h1>
 
     <div>
         <h2>My Limits</h2>
+        <h3>Processes (PID):</h3>
 
-        <h3>CPU</h3>
-        <h3>Memory</h3>
-        <h3>Storage</h3>
+        
+        <h3>Graphs & Statistics:</h3>
+
+        <canvas id="my-graph" style="width:100%;max-width:700px"></canvas>
     </div>
 
     <div>
-        <h2>Global</h2>
+        <h2>Global Graphs & Statistics</h2>
 
-        <p>Coming soon *tm</p>
+        <canvas id="global-graph" style="width:100%;max-width:700px"></canvas>
     </div>
     
 </body>
