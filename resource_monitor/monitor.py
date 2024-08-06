@@ -8,8 +8,8 @@ print(os.getcwd())
 
 disk_quota_cmd = ["quota", "-vs", "-p", "-w"]
 
-
 app = Flask('app', template_folder="resource_monitor/template/")
+
 
 def get_stats_by_pid():
     stats: dict = {}
@@ -28,9 +28,16 @@ def get_stats_by_pid():
 def index():
     return flask.render_template("monitor.html")
 
-@app.route('/data/by_pid')
+
+@app.route('/static/<path:filepath>')
+def get_js(filepath):
+    return flask.send_from_directory('resource_monitor/site_files/', filepath)
+
+
+@app.route('/data/pid')
 def data_pid():
     return get_stats_by_pid()
+
 
 @app.route('/data/global')
 def data_global():
@@ -56,6 +63,7 @@ def data_global():
         }
     }
     return data
+
 
 """
 psutil.cpu_percent()

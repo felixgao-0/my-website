@@ -1,3 +1,14 @@
+async function get_pid() {
+    const response = await fetch("/data/pid");
+    return await response.json();
+}
+
+async function get_global() {
+    const response = await fetch("/data/global");
+    return await response.json();
+}
+
+
 globalGraphData = {
     "x": [],
     "y": []
