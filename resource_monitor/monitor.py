@@ -2,13 +2,14 @@ from flask import Flask
 import flask
 import psutil
 import humanize
-import os
-
-print(os.getcwd())
 
 disk_quota_cmd = ["quota", "-vs", "-p", "-w"]
 
-app = Flask('app', template_folder="resource_monitor/template/")
+app = Flask(
+    'app', 
+    template_folder="resource_monitor/template/",
+    static_folder='resource_monitor/static'
+)
 
 
 def get_stats_by_pid():
@@ -27,11 +28,6 @@ def get_stats_by_pid():
 @app.route('/')
 def index():
     return flask.render_template("monitor.html")
-
-
-@app.route('/static/<path:filepath>')
-def get_js(filepath):
-    return flask.send_from_directory('resource_monitor/site_files/', filepath)
 
 
 @app.route('/data/pid')
@@ -65,9 +61,8 @@ def data_global():
     return data
 
 
-"""
-psutil.cpu_percent()
-psutil.virtual_memory()
-"""
+print("Registered routes:")
+for rule in app.url_map.iter_rules():
+    print(rule)
 
-app.run(host='0.0.0.0', port=8080)
+app.run(host='0.0.0.0', port=8080, debug=True)
