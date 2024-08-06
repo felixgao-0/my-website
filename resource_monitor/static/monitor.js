@@ -35,8 +35,14 @@ function setGlobalStorageBar(amount) {
 
 document.addEventListener("DOMContentLoaded", (event) => {
     console.log("DOM has fully loaded");
-    let globalData = get_global();
 
-    let amount = globalData.storage.percent
-    document.getElementById("global-storage-bar").style.width = amount + "%";
+    // Global data
+    fetch("/data/global")
+    .then((response) => response.json())
+    .then((globalData) => {
+        let amount = globalData.storage.percent
+        const globalProgressBar = document.getElementById("global-storage-bar");
+        globalProgressBar.textContent = amount + "%";
+        globalProgressBar.style.width = amount + "%";
+    });
 });
