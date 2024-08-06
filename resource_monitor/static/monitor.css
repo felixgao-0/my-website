@@ -1,0 +1,10 @@
+#global-storage-progress {
+  width: 100%;
+  background-color: grey;
+}
+
+#global-storage-bar {
+  width: 1%;
+  height: 30px;
+  background-color: green;
+}

@@ -8,27 +8,35 @@ async function get_global() {
     return await response.json();
 }
 
-
-globalGraphData = {
-    "x": [],
-    "y": []
-}
-
 /*
 const myGraph = new Chart("my-graph", {
     type: "line",
     data: {},
     options: {}
-}); */
+});*/
 
 const globalGraph = new Chart("global-graph", {
     type: "line",
     data: {
-        labels: xValues,
+        labels: ["1", "2", "3"],
         datasets: [{
             backgroundColor:"rgba(0,0,255,1.0)",
             borderColor: "rgba(0,0,255,0.1)",
-            data: yValues
-        }],
+            data: ["60%", "75%", "90%"]
+        }]
+    },
     options: {}
+});
+
+function setGlobalStorageBar(amount) {
+    var elem = document.getElementById("global-storage-bar");
+    elem.style.width = amount + "%";
+}
+
+document.addEventListener("DOMContentLoaded", (event) => {
+    console.log("DOM has fully loaded");
+    let globalData = get_global();
+
+    let amount = globalData.storage.percent
+    document.getElementById("global-storage-bar").style.width = amount + "%";
 });

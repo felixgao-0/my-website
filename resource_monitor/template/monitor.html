@@ -6,17 +6,20 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
     </script>
-    <script src=" {{ url_for('static', filename='monitor.js') }}"></script>
+    <script src="{{ url_for('static', filename='monitor.js') }}"></script>
+    <script src="{{ url_for('static', filename='humanize.js') }}"></script>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='monitor.css') }}">
 </head>
 <body>
     <h1>Resource Monitor & Vitals</h1>
 
     <div>
         <h2>My Limits</h2>
-        <h3>Processes (PID):</h3>
+        <h3>Processes (PID)</h3>
 
         
-        <h3>Graphs & Statistics:</h3>
+        <h3>Graphs & Statistics</h3>
 
         <canvas id="my-graph" style="width:100%;max-width:700px"></canvas>
     </div>
@@ -25,6 +28,11 @@
         <h2>Global Graphs & Statistics</h2>
 
         <canvas id="global-graph" style="width:100%;max-width:700px"></canvas>
+
+        <!-- Storage graph -->
+        <div id="global-storage-progress">
+          <div id="global-storage-bar"></div>
+        </div>
     </div>
     
 </body>
