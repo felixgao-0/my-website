@@ -1,7 +1,6 @@
 from flask import Flask
 import flask
 import psutil
-import humanize
 
 disk_quota_cmd = ["quota", "-vs", "-p", "-w"]
 
@@ -42,7 +41,7 @@ def data_global():
     data = {
         "cpu": {
             "usage": psutil.cpu_percent(),
-            "frequency": psutil.cpu_freq(),
+            "frequency": psutil.cpu_freq().current,
             "per-core": psutil.cpu_percent(percpu=True)
         },
         "memory": {
@@ -60,9 +59,5 @@ def data_global():
     }
     return data
 
-
-print("Registered routes:")
-for rule in app.url_map.iter_rules():
-    print(rule)
 
 app.run(host='0.0.0.0', port=8080, debug=True)
