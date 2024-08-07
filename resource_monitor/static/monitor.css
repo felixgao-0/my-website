@@ -1,13 +1,16 @@
-#global-storage-progress {
-  width: 100%;
-  background-color: grey;
+.line-graph {
+    margin-left: 1rem;
+    margin-right: 1rem;
+    width: 90%;
+    height: 15rem;
 }
 
-#global-storage-bar {
-  width: 1%;
-  height: 30px;
-  background-color: green;
-  text-align: center;
-  line-height: 30px;
-  color: white;
+#pid-data {
+    margin-left: 1rem;
+    margin-right: 1rem;
+    width: 100%;
+}
+
+tr:nth-child(even) {
+  background-color: #D6EEEE;
 }

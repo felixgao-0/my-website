@@ -1,21 +1,4 @@
-async function get_pid() {
-    const response = await fetch("/data/pid");
-    return await response.json();
-}
-
-async function get_global() {
-    const response = await fetch("/data/global");
-    return await response.json();
-}
-
-/*
-const myGraph = new Chart("my-graph", {
-    type: "line",
-    data: {},
-    options: {}
-});*/
-
-const globalGraph = new Chart("global-graph", {
+const globalGraph = new Chart("cpu-graph", {
     type: "line",
     data: {
         labels: ["1", "2", "3"],
@@ -28,11 +11,6 @@ const globalGraph = new Chart("global-graph", {
     options: {}
 });
 
-function setGlobalStorageBar(amount) {
-    var elem = document.getElementById("global-storage-bar");
-    elem.style.width = amount + "%";
-}
-
 document.addEventListener("DOMContentLoaded", (event) => {
     console.log("DOM has fully loaded");
 
@@ -40,9 +18,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
     fetch("/data/global")
     .then((response) => response.json())
     .then((globalData) => {
-        let amount = globalData.storage.percent
-        const globalProgressBar = document.getElementById("global-storage-bar");
-        globalProgressBar.textContent = amount + "%";
-        globalProgressBar.style.width = amount + "%";
+        //Nothing for now
     });
 });
