@@ -1,30 +1,38 @@
-function getRandomColor() {
-  var letters = '0123456789ABCDEF';
-  var color = '#';
-  for (var i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
-}
-
-const options = {
-    plugins: {
-        legend: {
-            display: true,
-            position: 'bottom',
-            labels: {
-                usePointStyle: true,
-                pointStyle: 'circle',
-                boxHeight: 8
+function getOptionData(limit, addScale) {
+    let options = {
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    usePointStyle: true,
+                    pointStyle: 'circle',
+                    boxHeight: 8
+                }
             }
         },
-        annotation: {
+        spanGaps: true
+    }
+    if (addScale) {
+        options.scales = {
+            y: {
+                min: 0,
+                max: 100,
+                ticks: {
+                    callback: function(value) {
+                        return value + '%';
+                    }
+                }
+            }
+        }
+    }
+    if (limit !== null) {
+        options.plugins.annotation = {
             annotations: [{
                 type: 'line',
                 mode: 'horizontal',
                 scaleID: 'y-axis-0',
-                yMin: 50,
-                yMax: 50,
+                yMin: limit,
+                yMax: limit,
                 borderColor: 'red',
                 borderWidth: 2,
                 label: {
@@ -32,31 +40,21 @@ const options = {
                 }
             }]
         }
-    },
-    scales: {
-        y: {
-            min: 0,
-            max: 100,
-            ticks: {
-                callback: function(value) {
-                    return value + '%';
-                }
-            }
-        }
     }
+    return options
 }
 
 const cpuData = {
-    labels: ['12:45:40', '12:45:41', '12:45:42', '12:45:43'],
+    labels: Array(30).fill(null),
     datasets: [{
         label: 'My Usage',
-        data: [10, 11.5, 14, 13.87],
+        data: Array(30).fill(null),
         fill: true,
         backgroundColor: 'rgba(54, 162, 235, 0.2)',
         borderColor: 'rgba(54, 162, 235, 1)'
     }, {
         label: 'Global Usage',
-        data: [50.67, 53.89, 53.63, 48.79],
+        data: Array(30).fill(null),
         fill: true,
         backgroundColor: 'rgba(201, 203, 207, 0.2)',
         borderColor: 'rgba(201, 203, 207, 1)'
@@ -64,16 +62,16 @@ const cpuData = {
 }
 
 const memoryData = {
-    labels: ['12:45:40', '12:45:41', '12:45:42', '12:45:43'],
+    labels: Array(30).fill(null),
     datasets: [{
         label: 'My Usage',
-        data: [0.5, 0.67, 1, 1.43],
+        data: Array(30).fill(null),
         fill: true,
         backgroundColor: 'rgba(54, 162, 235, 0.2)',
         borderColor: 'rgba(54, 162, 235, 1)'
     }, {
         label: 'Global Usage',
-        data: [50.67, 48.32, 49.65, 45.87],
+        data: Array(30).fill(null),
         fill: true,
         backgroundColor: 'rgba(201, 203, 207, 0.2)',
         borderColor: 'rgba(201, 203, 207, 1)'
@@ -81,10 +79,10 @@ const memoryData = {
 }
 
 const storageData = {
-    labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
+    labels: Array(30).fill(null),
     datasets: [{
         label: "Storage",
-        data: [12, 54, 32, 54, 34, 32, 57, 87, 32, 14, 23, 56],
+        data: Array(30).fill(null),
         fill: true,
         backgroundColor: [
             'rgb(255, 99, 132)',
@@ -103,40 +101,37 @@ const storageData = {
 document.addEventListener("DOMContentLoaded", (event) => {
     console.log("DOM has fully loaded");
 
+    const cpuStats = document.getElementById("cpu-usage");
+    const memoryStats = document.getElementById("memory-usage");
+    const storageStats = document.getElementById("storage-usage");
+
     // Global data
     fetch("/data/global")
     .then((response) => response.json())
     .then((globalData) => {
-        //Nothing for now
+        console.log("Loaded global data");
+        console.log(globalData);
+
+        cpuStats.textContent = globalData.cpu.usage + "%";
+        memoryStats.textContent = globalData.memory.percent + "%";
+        storageStats.textContent = globalData.storage.percent + "%";
     });
 
     const cpuGraph = new Chart("cpu-graph", {
         type: 'line',
         data: cpuData,
-        options: options
+        options: getOptionData(null, true)
     });
 
     const memoryGraph = new Chart("memory-graph", {
         type: 'line',
         data: memoryData,
-        options: options
+        options: getOptionData(2, true)
     });
 
     const storageGraph = new Chart("storage-graph", {
         type: 'doughnut',
         data: storageData,
-        options: {
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'bottom',
-                    labels: {
-                        usePointStyle: true,
-                        pointStyle: 'circle',
-                        boxHeight: 8
-                    }
-                }
-            }
-        }
+        options: getOptionData(null, false)
     });
 });
