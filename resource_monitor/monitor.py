@@ -11,53 +11,51 @@ app = Flask(
 )
 
 
-def get_stats_by_pid():
-    stats: dict = {}
-    for pid in psutil.pids():
-        process = psutil.Process(pid)
-        stats[f"{pid}"] = {
-            "name": process.name(),
-            "cpu": process.cpu_percent(),
-            "memory": process.memory_info().rss,
-            "status": process.status()
-        }
-    return stats
-
-
 @app.route('/')
 def index():
     return flask.render_template("monitor.html")
 
 
-@app.route('/data/pid')
+@app.route('/data')
 def data_pid():
-    return get_stats_by_pid()
-
-
-@app.route('/data/global')
-def data_global():
+    stats: dict = {"by_pid": {}, "total": {}}
     memory = psutil.virtual_memory()
     storage = psutil.disk_usage('/')
-    data = {
-        "cpu": {
-            "usage": psutil.cpu_percent(),
-            "frequency": psutil.cpu_freq().current,
-            "per-core": psutil.cpu_percent(percpu=True)
-        },
-        "memory": {
-            "free": memory.available,
-            "used": memory.used,
-            "total": memory.total,
-            "percent": memory.percent
-        },
-        "storage": {
-            "total": storage.total,
-            "used": storage.used,
-            "free": storage.free,
-            "percent": storage.percent
+
+    total_cpu: int = 0
+    total_mem: int = 0
+
+    for pid in psutil.pids():
+        process = psutil.Process(pid)
+        stats["by_pid"][f"{pid}"] = {
+            "name": process.name(),
+            "cpu": process.cpu_percent(),
+            "memory": process.memory_info().rss,
+            "status": process.status()
         }
+        total_cpu += process.cpu_percent()
+        total_mem += process.memory_info().rss
+
+    stats["total"]["cpu"] = {
+        "usage": psutil.cpu_percent(),
+        "frequency": psutil.cpu_freq().current,
+        "per-core": psutil.cpu_percent(percpu=True)
     }
-    return data
+    stats["total"]["memory"] = {
+        "free": memory.available,
+        "used": memory.used,
+        "total": memory.total,
+        "percent": memory.percent
+    }
+    stats["total"]["storage"] = {
+        "total": storage.total,
+        "used": storage.used,
+        "free": storage.free,
+        "percent": storage.percent
+    }
+    stats["total_cpu"] = total_cpu
+    stats["total_mem"] = total_mem
+    return stats
 
 
 app.run(host='0.0.0.0', port=8080, debug=True)

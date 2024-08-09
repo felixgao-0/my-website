@@ -8,10 +8,18 @@ function getOptionData(limit, addScale) {
                     pointStyle: 'circle',
                     boxHeight: 8
                 }
+            },
+            tooltip: {
+                enabled: false, // Disable tooltips
             }
         },
-        spanGaps: true,
-        animation: false
+        animation: false,
+        tension: 0.1,
+        elements: {
+            point: {
+                radius: 0 // default to disabled in all datasets
+            }
+        }
     }
     if (addScale) {
         options.scales = {
@@ -46,36 +54,55 @@ function getOptionData(limit, addScale) {
 }
 
 function updateGraphs(chartCpu, chartMemory) {
-    fetch("/data/global")
-    .then((response) => response.json())
+    fetch("/data")
+    .then((response) => {
+        if (response.status === 200) {
+            return response.json()
+        } else {
+            console.warn(`Couldn't fetch global data - HTTP {response.status}`)
+            return null
+        }
+    })
     .then((globalData) => {
         CpuData = chartCpu.data;
-        CpuData.labels.push("");
-        CpuData.datasets[1].data.push(globalData.cpu.usage);
-        CpuData.datasets[1].data.shift();
-        CpuData.labels.shift();
-
-        chartCpu.update();
-        
-        cpuStats = document.getElementById("cpu-usage");
-        cpuStats.textContent = globalData.cpu.usage + "%";
-
-
         MemoryData = chartMemory.data;
-        MemoryData.labels.push("");
-        MemoryData.datasets[1].data.push(globalData.memory.percent);
-        MemoryData.datasets[1].data.shift();
-        MemoryData.labels.shift();
 
+        if (globalData === null) {
+            console.log('hii')
+            CpuData.labels.push("");
+            CpuData.datasets[1].data.push(null);
+            CpuData.datasets[1].data.shift();
+            CpuData.labels.shift();
+
+            MemoryData.labels.push("");
+            MemoryData.datasets[1].data.push(null);
+            MemoryData.datasets[1].data.shift();
+            MemoryData.labels.shift();
+        } else {
+            CpuData.labels.push("");
+            CpuData.datasets[1].data.push(globalData.cpu.usage);
+            CpuData.datasets[1].data.shift();
+            CpuData.labels.shift();
+        
+            cpuStats = document.getElementById("cpu-usage");
+            cpuStats.textContent = globalData.cpu.usage + "%";
+
+            MemoryData.labels.push("");
+            MemoryData.datasets[1].data.push(globalData.memory.percent);
+            MemoryData.datasets[1].data.shift();
+            MemoryData.labels.shift();
+
+            memStats = document.getElementById("memory-usage");
+            memStats.textContent = globalData.memory.percent + "%";
+        }
+        console.log("update")
+        chartCpu.update();
         chartMemory.update();
-
-        memStats = document.getElementById("memory-usage");
-        memStats.textContent = globalData.memory.percent + "%";
     });
 }
 
 const cpuData = {
-    labels: Array(30).fill(null),
+    labels: Array(30).fill(""),
     datasets: [{
         label: 'My Usage',
         data: Array(30).fill(null),
@@ -92,7 +119,7 @@ const cpuData = {
 }
 
 const memoryData = {
-    labels: Array(30).fill(null),
+    labels: Array(30).fill(""),
     datasets: [{
         label: 'My Usage',
         data: Array(30).fill(null),
