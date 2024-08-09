@@ -10,7 +10,8 @@ function getOptionData(limit, addScale) {
                 }
             }
         },
-        spanGaps: true
+        spanGaps: true,
+        animation: false
     }
     if (addScale) {
         options.scales = {
@@ -42,6 +43,35 @@ function getOptionData(limit, addScale) {
         }
     }
     return options
+}
+
+function updateGraphs(chartCpu, chartMemory) {
+    fetch("/data/global")
+    .then((response) => response.json())
+    .then((globalData) => {
+        CpuData = chartCpu.data;
+        CpuData.labels.push("");
+        CpuData.datasets[1].data.push(globalData.cpu.usage);
+        CpuData.datasets[1].data.shift();
+        CpuData.labels.shift();
+
+        chartCpu.update();
+        
+        cpuStats = document.getElementById("cpu-usage");
+        cpuStats.textContent = globalData.cpu.usage + "%";
+
+
+        MemoryData = chartMemory.data;
+        MemoryData.labels.push("");
+        MemoryData.datasets[1].data.push(globalData.memory.percent);
+        MemoryData.datasets[1].data.shift();
+        MemoryData.labels.shift();
+
+        chartMemory.update();
+
+        memStats = document.getElementById("memory-usage");
+        memStats.textContent = globalData.memory.percent + "%";
+    });
 }
 
 const cpuData = {
@@ -110,7 +140,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
     .then((response) => response.json())
     .then((globalData) => {
         console.log("Loaded global data");
-        console.log(globalData);
 
         cpuStats.textContent = globalData.cpu.usage + "%";
         memoryStats.textContent = globalData.memory.percent + "%";
@@ -134,4 +163,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
         data: storageData,
         options: getOptionData(null, false)
     });
+
+    setInterval(updateGraphs, 1000, cpuGraph, memoryGraph);
 });
