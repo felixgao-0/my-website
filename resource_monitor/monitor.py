@@ -18,28 +18,28 @@ def index():
 
 @app.route('/data')
 def data_pid():
-    stats: dict = {"by_pid": {}, "total": {}}
+    stats: dict = {"by_pid": [], "total": {}}
     memory = psutil.virtual_memory()
     storage = psutil.disk_usage('/')
 
-    total_cpu: int = 0
-    total_mem: int = 0
+    total_cpu: float = 0
+    total_mem: float = 0
 
-    for pid in psutil.pids():
-        process = psutil.Process(pid)
-        stats["by_pid"][f"{pid}"] = {
+    for process in psutil.process_iter():
+        stats["by_pid"].append({
+            "pid": process.pid,
             "name": process.name(),
             "cpu": process.cpu_percent(),
             "memory": process.memory_info().rss,
             "status": process.status()
-        }
+        })
         total_cpu += process.cpu_percent()
         total_mem += process.memory_info().rss
 
     stats["total"]["cpu"] = {
-        "usage": psutil.cpu_percent(),
+        "usage": psutil.cpu_percent(interval=0.1),
         "frequency": psutil.cpu_freq().current,
-        "per-core": psutil.cpu_percent(percpu=True)
+        "per-core": psutil.cpu_percent(interval=0.1, percpu=True)
     }
     stats["total"]["memory"] = {
         "free": memory.available,

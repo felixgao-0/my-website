@@ -1,4 +1,4 @@
-function getOptionData(limit, addScale) {
+function getOptionData(limit, addScale, scaleMax = 100) {
     let options = {
         plugins: {
             legend: {
@@ -25,7 +25,7 @@ function getOptionData(limit, addScale) {
         options.scales = {
             y: {
                 min: 0,
-                max: 100,
+                max: scaleMax,
                 ticks: {
                     callback: function(value) {
                         return value + '%';
@@ -59,43 +59,56 @@ function updateGraphs(chartCpu, chartMemory) {
         if (response.status === 200) {
             return response.json()
         } else {
-            console.warn(`Couldn't fetch global data - HTTP {response.status}`)
+            console.warn(`Couldn't fetch global data - HTTP ${response.status}`)
             return null
         }
     })
-    .then((globalData) => {
-        CpuData = chartCpu.data;
-        MemoryData = chartMemory.data;
+    .then((data) => {
+        let CpuData = chartCpu.data;
+        let MemoryData = chartMemory.data;
 
-        if (globalData === null) {
-            console.log('hii')
-            CpuData.labels.push("");
+        let myCpuUsage = 0;
+        let myMemUsage = 0;
+
+        data.by_pid.forEach((process) => {
+            myCpuUsage += process.cpu;
+            myMemUsage += process.memory;
+        });
+
+        CpuData.labels.push("");
+        CpuData.labels.shift();
+
+        MemoryData.labels.push("");
+        MemoryData.labels.shift();
+
+        if (data === null) {
+            CpuData.datasets[0].data.push(null);
+            CpuData.datasets[0].data.shift();
             CpuData.datasets[1].data.push(null);
             CpuData.datasets[1].data.shift();
-            CpuData.labels.shift();
 
-            MemoryData.labels.push("");
+            MemoryData.datasets[0].data.push(null);
+            MemoryData.datasets[0].data.shift();
             MemoryData.datasets[1].data.push(null);
             MemoryData.datasets[1].data.shift();
-            MemoryData.labels.shift();
         } else {
-            CpuData.labels.push("");
-            CpuData.datasets[1].data.push(globalData.cpu.usage);
+            CpuData.datasets[0].data.push(myCpuUsage);
+            CpuData.datasets[0].data.shift();
+            CpuData.datasets[1].data.push(data.total.cpu.usage);
             CpuData.datasets[1].data.shift();
-            CpuData.labels.shift();
-        
-            cpuStats = document.getElementById("cpu-usage");
-            cpuStats.textContent = globalData.cpu.usage + "%";
 
-            MemoryData.labels.push("");
-            MemoryData.datasets[1].data.push(globalData.memory.percent);
+            cpuStats = document.getElementById("cpu-usage");
+            cpuStats.textContent = data.total.cpu.usage + "%";
+
+            MemoryData.datasets[0].data.push(myMemUsage);
+            MemoryData.datasets[0].data.shift();
+            MemoryData.datasets[1].data.push(data.total.memory.percent);
             MemoryData.datasets[1].data.shift();
-            MemoryData.labels.shift();
 
             memStats = document.getElementById("memory-usage");
-            memStats.textContent = globalData.memory.percent + "%";
+            memStats.textContent = data.total.memory.percent + "%";
         }
-        console.log("update")
+        console.log("updated graphs")
         chartCpu.update();
         chartMemory.update();
     });
@@ -162,15 +175,15 @@ document.addEventListener("DOMContentLoaded", (event) => {
     const memoryStats = document.getElementById("memory-usage");
     const storageStats = document.getElementById("storage-usage");
 
-    // Global data
+    // Get data
     fetch("/data/global")
     .then((response) => response.json())
-    .then((globalData) => {
+    .then((data) => {
         console.log("Loaded global data");
 
-        cpuStats.textContent = globalData.cpu.usage + "%";
-        memoryStats.textContent = globalData.memory.percent + "%";
-        storageStats.textContent = globalData.storage.percent + "%";
+        cpuStats.textContent = data.cpu.usage + "%";
+        memoryStats.textContent = data.memory.percent + "%";
+        storageStats.textContent = data.storage.percent + "%";
     });
 
     const cpuGraph = new Chart("cpu-graph", {
