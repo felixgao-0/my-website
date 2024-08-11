@@ -102,13 +102,13 @@ function updateGraphs(chartCpu, chartMemory) {
 
             MemoryData.datasets[0].data.push(roundDecimal(myMemUsage / 10**9, 2));
             MemoryData.datasets[0].data.shift();
-            MemoryData.datasets[1].data.push(roundDecimal(data.total.memory.total / 10**9, 2));
+            MemoryData.datasets[1].data.push(roundDecimal(data.total.memory.used / 10**9, 2));
             MemoryData.datasets[1].data.shift();
 
             memStats = document.getElementById("memory-usage");
             memStats.textContent = data.total.memory.percent + "%";
         }
-        console.log("updated graphs")
+        console.log("updated graphs");
         chartCpu.update();
         chartMemory.update();
     });

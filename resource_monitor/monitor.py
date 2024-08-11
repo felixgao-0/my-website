@@ -1,8 +1,7 @@
 from flask import Flask
 import flask
 import psutil
-
-disk_quota_cmd = ["quota", "-vs", "-p", "-w"]
+import subprocess
 
 app = Flask(
     'app', 
@@ -11,8 +10,15 @@ app = Flask(
 )
 
 
+def get_storage():
+    result = subprocess.run(["du", "-S"], shell=True, capture_output=True, text=True)
+    result_dict = result.stdout.splitlines()
+    for file_path in result_dict:
+        print(file_path)
+        
 @app.route('/')
 def index():
+    get_storage()
     return flask.render_template("monitor.html")
 
 
