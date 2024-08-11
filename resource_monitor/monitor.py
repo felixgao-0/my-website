@@ -11,25 +11,34 @@ app = Flask(
 
 
 def get_storage():
-    result = subprocess.run(["du", "-S"], shell=True, capture_output=True, text=True)
-    result_dict = result.stdout.splitlines()
-    for file_path in result_dict:
-        print(file_path)
-        
+    result = subprocess.run(
+        ["du", "-h", "--max-depth=2", "."],
+        capture_output=True, 
+        text=True
+    )
+    new_result = []
+    for file_path in result.stdout.splitlines():
+        split = file_path.split("\t")
+        new_result.append(split) # Add item to dict
+
+    return new_result
+
+
 @app.route('/')
 def index():
-    get_storage()
     return flask.render_template("monitor.html")
 
 
 @app.route('/data')
 def data_pid():
-    stats: dict = {"by_pid": [], "total": {}}
+    stats: dict = {"by_pid": [], "total": {}, "by_dir": []}
     memory = psutil.virtual_memory()
     storage = psutil.disk_usage('/')
 
     total_cpu: float = 0
     total_mem: float = 0
+
+    stats["by_dir"].append(get_storage())
 
     for process in psutil.process_iter():
         stats["by_pid"].append({

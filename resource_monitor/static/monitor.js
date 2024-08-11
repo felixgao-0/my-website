@@ -208,6 +208,14 @@ document.addEventListener("DOMContentLoaded", (event) => {
             options: getOptionData(null, false)
         });
 
+        memoryStats.addEventListener("mouseover", (event) => {
+            memoryStats.textContent = `${roundDecimal(data.total.memory.used / 10**9, 2)} GB /${roundDecimal(data.total.memory.total / 10**9, 2)} GB`
+        });
+
+        memoryStats.addEventListener("onmouseout", (event) => {
+            memoryStats.textContent = data.total.memory.percent + "%";
+        });
+
         setInterval(updateGraphs, 1000, cpuGraph, memoryGraph);
     });
 });
