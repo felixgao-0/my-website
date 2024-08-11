@@ -1,4 +1,4 @@
-function getOptionData(limit, addScale, scaleMax = 100) {
+function getOptionData(limit, addScale, scaleMax = 100, unit = "%") {
     let options = {
         plugins: {
             legend: {
@@ -28,7 +28,7 @@ function getOptionData(limit, addScale, scaleMax = 100) {
                 max: scaleMax,
                 ticks: {
                     callback: function(value) {
-                        return value + '%';
+                        return value + unit;
                     }
                 }
             }
@@ -70,11 +70,6 @@ function updateGraphs(chartCpu, chartMemory) {
         let myCpuUsage = 0;
         let myMemUsage = 0;
 
-        data.by_pid.forEach((process) => {
-            myCpuUsage += process.cpu;
-            myMemUsage += process.memory;
-        });
-
         CpuData.labels.push("");
         CpuData.labels.shift();
 
@@ -92,6 +87,11 @@ function updateGraphs(chartCpu, chartMemory) {
             MemoryData.datasets[1].data.push(null);
             MemoryData.datasets[1].data.shift();
         } else {
+            data.by_pid.forEach((process) => {
+                myCpuUsage += process.cpu;
+                myMemUsage += process.memory;
+            });
+
             CpuData.datasets[0].data.push(myCpuUsage);
             CpuData.datasets[0].data.shift();
             CpuData.datasets[1].data.push(data.total.cpu.usage);
@@ -100,9 +100,9 @@ function updateGraphs(chartCpu, chartMemory) {
             cpuStats = document.getElementById("cpu-usage");
             cpuStats.textContent = data.total.cpu.usage + "%";
 
-            MemoryData.datasets[0].data.push(myMemUsage);
+            MemoryData.datasets[0].data.push(roundDecimal(myMemUsage / 10**9, 2));
             MemoryData.datasets[0].data.shift();
-            MemoryData.datasets[1].data.push(data.total.memory.percent);
+            MemoryData.datasets[1].data.push(roundDecimal(data.total.memory.total / 10**9, 2));
             MemoryData.datasets[1].data.shift();
 
             memStats = document.getElementById("memory-usage");
@@ -112,6 +112,10 @@ function updateGraphs(chartCpu, chartMemory) {
         chartCpu.update();
         chartMemory.update();
     });
+}
+
+function roundDecimal(number, roundTo) {
+    return parseFloat((number).toFixed(roundTo))
 }
 
 const cpuData = {
@@ -176,33 +180,34 @@ document.addEventListener("DOMContentLoaded", (event) => {
     const storageStats = document.getElementById("storage-usage");
 
     // Get data
-    fetch("/data/global")
+    fetch("/data")
     .then((response) => response.json())
     .then((data) => {
         console.log("Loaded global data");
 
-        cpuStats.textContent = data.cpu.usage + "%";
-        memoryStats.textContent = data.memory.percent + "%";
-        storageStats.textContent = data.storage.percent + "%";
-    });
+        cpuStats.textContent = data.total.cpu.usage + "%";
+        memoryStats.textContent = data.total.memory.percent + "%";
+        storageStats.textContent = data.total.storage.percent + "%";
 
-    const cpuGraph = new Chart("cpu-graph", {
-        type: 'line',
-        data: cpuData,
-        options: getOptionData(null, true)
-    });
+        const cpuGraph = new Chart("cpu-graph", {
+            type: 'line',
+            data: cpuData,
+            options: getOptionData(null, true)
+        });
 
-    const memoryGraph = new Chart("memory-graph", {
-        type: 'line',
-        data: memoryData,
-        options: getOptionData(2, true)
-    });
+        // We need global data to set this graph
+        const memoryGraph = new Chart("memory-graph", {
+            type: 'line',
+            data: memoryData,
+            options: getOptionData(2, true, roundDecimal(data.total.memory.total / 10**9, 2), " GB") // Round and convert to gb
+        });
 
-    const storageGraph = new Chart("storage-graph", {
-        type: 'doughnut',
-        data: storageData,
-        options: getOptionData(null, false)
-    });
+        const storageGraph = new Chart("storage-graph", {
+            type: 'doughnut',
+            data: storageData,
+            options: getOptionData(null, false)
+        });
 
-    setInterval(updateGraphs, 1000, cpuGraph, memoryGraph);
+        setInterval(updateGraphs, 1000, cpuGraph, memoryGraph);
+    });
 });
