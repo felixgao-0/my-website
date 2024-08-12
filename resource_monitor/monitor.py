@@ -2,6 +2,7 @@ from flask import Flask
 import flask
 import psutil
 import subprocess
+import os
 
 app = Flask(
     'app', 
@@ -9,10 +10,11 @@ app = Flask(
     static_folder='resource_monitor/static'
 )
 
+print(f"Current directory: {os.getcwd()}")
 
 def get_storage():
     result = subprocess.run(
-        ["du", "--max-depth=1", "."],
+        ["du", "--max-depth=1", os.getcwd()],
         capture_output=True, 
         text=True
     )

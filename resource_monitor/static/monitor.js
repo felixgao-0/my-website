@@ -25,7 +25,6 @@ function getOptionData(limit, addScale, scaleMax = 100, unit = "%") {
             }
         },
         animation: false,
-        tension: 0.1,
         elements: {
             point: {
                 radius: 0 // default to disabled in all datasets
@@ -135,9 +134,15 @@ function updateGraphs(chartCpu, chartMemory) {
             newRow.insertCell(0).textContent = process.pid;
             newRow.insertCell(1).textContent = process.name;
             newRow.insertCell(2).textContent = process.cpu;
-            newRow.insertCell(3).textContent = process.memory;
+            newRow.insertCell(3).textContent = roundDecimal(process.memory / 10**9, 2);
             newRow.insertCell(4).textContent = process.status;
         });
+        let totalRow = table.insertRow(table.rows.length);
+        totalRow.insertCell(0).textContent = 'TOTAL:';
+        totalRow.insertCell(1).textContent = '';
+        totalRow.insertCell(2).textContent = myCpuUsage;
+        totalRow.insertCell(3).textContent = roundDecimal(myMemUsage / 10**9, 2);
+        totalRow.insertCell(4).textContent = '';
         
         console.log("updated graphs");
         chartCpu.update();
@@ -301,15 +306,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
             storageGraph.data.datasets[0].data.push(directory[0] / 10**6);
         });
         storageGraph.update();
-
-        data.by_pid.forEach((process) => {
-            let newRow = table.insertRow(table.rows.length);
-            newRow.insertCell(0).textContent = process.pid;
-            newRow.insertCell(1).textContent = process.name;
-            newRow.insertCell(2).textContent = process.cpu;
-            newRow.insertCell(3).textContent = process.memory;
-            newRow.insertCell(4).textContent = process.status;
-        });
 
         setInterval(updateGraphs, 1000, cpuGraph, memoryGraph);
     });

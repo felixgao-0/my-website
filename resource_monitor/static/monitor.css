@@ -33,10 +33,7 @@ h1, h2 {
   font-style: normal;
 }
 
-.container {
+.graph-selector {
     display: flex;
     align-items: center;
-}
-.radio-group {
-    margin-right: 1rem;
 }
