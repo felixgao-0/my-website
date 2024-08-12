@@ -32,3 +32,11 @@ h1, h2 {
   font-weight: 500;
   font-style: normal;
 }
+
+.container {
+    display: flex;
+    align-items: center;
+}
+.radio-group {
+    margin-right: 1rem;
+}

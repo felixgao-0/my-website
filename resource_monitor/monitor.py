@@ -12,7 +12,7 @@ app = Flask(
 
 def get_storage():
     result = subprocess.run(
-        ["du", "--max-depth=2", "."],
+        ["du", "--max-depth=1", "."],
         capture_output=True, 
         text=True
     )

@@ -11,6 +11,17 @@ function getOptionData(limit, addScale, scaleMax = 100, unit = "%") {
             },
             tooltip: {
                 enabled: false, // Disable tooltips
+                callbacks: {
+                    label: function(context) {
+                        let label = context.dataset.label || '';
+
+                        if (context.parsed !== null) {
+                            label += `: ${context.parsed} ${unit}`;
+                        }
+
+                        return label;
+                    }
+                }
             }
         },
         animation: false,
@@ -64,6 +75,8 @@ function updateGraphs(chartCpu, chartMemory) {
         }
     })
     .then((data) => {
+        const table = document.getElementById("pid-chart");
+        
         let CpuData = chartCpu.data;
         let MemoryData = chartMemory.data;
 
@@ -92,13 +105,12 @@ function updateGraphs(chartCpu, chartMemory) {
                 myMemUsage += process.memory;
             });
 
-            CpuData.datasets[0].data.push(myCpuUsage);
+            CpuData.datasets[0].data.push(roundDecimal(myCpuUsage, 2));
             CpuData.datasets[0].data.shift();
             CpuData.datasets[1].data.push(data.total.cpu.usage);
             CpuData.datasets[1].data.shift();
 
-            cpuStats = document.getElementById("cpu-usage");
-            cpuStats.textContent = data.total.cpu.usage + "%";
+            updateCpuTxt(data)
 
             MemoryData.datasets[0].data.push(roundDecimal(myMemUsage / 10**9, 2));
             MemoryData.datasets[0].data.shift();
@@ -107,6 +119,26 @@ function updateGraphs(chartCpu, chartMemory) {
 
             updateMemoryTxt(data);
         }
+        
+        // Display data in chart
+        
+        // CREDIT: Thanks stackoverflow
+        // https://stackoverflow.com/questions/16270087/delete-all-rows-on-a-table-except-first-with-javascript
+        var rows = table.rows;
+        var i = rows.length;
+        while (--i) {
+            table.deleteRow(i);
+        }
+
+        data.by_pid.forEach((process) => {
+            let newRow = table.insertRow(table.rows.length);
+            newRow.insertCell(0).textContent = process.pid;
+            newRow.insertCell(1).textContent = process.name;
+            newRow.insertCell(2).textContent = process.cpu;
+            newRow.insertCell(3).textContent = process.memory;
+            newRow.insertCell(4).textContent = process.status;
+        });
+        
         console.log("updated graphs");
         chartCpu.update();
         chartMemory.update();
@@ -124,6 +156,22 @@ function updateMemoryTxt(data) {
         memoryStats.textContent = `${roundDecimal(data.total.memory.used / 10**9, 2)} GB / ${roundDecimal(data.total.memory.total / 10**9, 2)} GB`
     } else {
         memoryStats.textContent = data.total.memory.percent + "%";
+    }
+}
+
+function updateCpuTxt(data) {
+    const cpuStats = document.getElementById("cpu-usage");
+    let myCpuUsage = 0;
+
+    console.log(data)
+    data.by_pid.forEach((process) => {
+        myCpuUsage += process.cpu;
+    });
+
+    if (cpuStats.matches(':hover')) {
+        cpuStats.textContent = `Global Usage: ${data.total.cpu.usage}%`
+    } else {
+        cpuStats.textContent = roundDecimal(myCpuUsage, 2) + "%";
     }
 }
 
@@ -184,6 +232,8 @@ const storageData = {
 document.addEventListener("DOMContentLoaded", (event) => {
     console.log("DOM has fully loaded");
 
+    const table = document.getElementById("pid-chart");
+
     const cpuStats = document.getElementById("cpu-usage");
     const memoryStats = document.getElementById("memory-usage");
     const storageStats = document.getElementById("storage-usage");
@@ -194,7 +244,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     .then((data) => {
         console.log("Loaded global data");
 
-        cpuStats.textContent = data.total.cpu.usage + "%";
+        updateCpuTxt(data);
         updateMemoryTxt(data);
         storageStats.textContent = data.total.storage.percent + "%";
 
@@ -202,6 +252,19 @@ document.addEventListener("DOMContentLoaded", (event) => {
             type: 'line',
             data: cpuData,
             options: getOptionData(null, true)
+        });
+
+        cpuStats.addEventListener("mouseover", (event) => {
+            cpuStats.textContent = `Global Usage: ${data.total.cpu.usage}%`
+        });
+
+        cpuStats.addEventListener("mouseout", (event) => {
+            let myCpuUsage = 0;
+            console.log(data)
+            data.by_pid.forEach((process) => {
+                myCpuUsage += process.cpu;
+            });
+            cpuStats.textContent = roundDecimal(myCpuUsage, 2) + "%";
         });
 
         // We need global data to set this graph
@@ -219,7 +282,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
             memoryStats.textContent = data.total.memory.percent + "%";
         });
 
-        let storageOptions = getOptionData(null, false)
+        let storageOptions = getOptionData(null, false, null, " GB")
         storageOptions.animation = true;
         storageOptions.plugins.tooltip.enabled = true;
         console.log(storageOptions)
@@ -230,10 +293,23 @@ document.addEventListener("DOMContentLoaded", (event) => {
         });
 
         data.by_dir.forEach((directory) => {
+            // Add storage data :D
+            if (directory[1] == ".") { // Ignore the root filepath
+                return
+            }
             storageGraph.data.labels.push(directory[1]);
             storageGraph.data.datasets[0].data.push(directory[0] / 10**6);
         });
         storageGraph.update();
+
+        data.by_pid.forEach((process) => {
+            let newRow = table.insertRow(table.rows.length);
+            newRow.insertCell(0).textContent = process.pid;
+            newRow.insertCell(1).textContent = process.name;
+            newRow.insertCell(2).textContent = process.cpu;
+            newRow.insertCell(3).textContent = process.memory;
+            newRow.insertCell(4).textContent = process.status;
+        });
 
         setInterval(updateGraphs, 1000, cpuGraph, memoryGraph);
     });
