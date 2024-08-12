@@ -162,10 +162,10 @@ const memoryData = {
 }
 
 const storageData = {
-    labels: Array(30).fill(null),
+    labels: [],
     datasets: [{
         label: "Storage",
-        data: Array(30).fill(null),
+        data: [],
         fill: true,
         backgroundColor: [
             'rgb(255, 99, 132)',
@@ -211,19 +211,29 @@ document.addEventListener("DOMContentLoaded", (event) => {
             options: getOptionData(2, true, roundDecimal(data.total.memory.total / 10**9, 2), " GB") // Round and convert to gb
         });
 
+        memoryStats.addEventListener("mouseover", (event) => {
+            memoryStats.textContent = `${roundDecimal(data.total.memory.used / 10**9, 2)} GB / ${roundDecimal(data.total.memory.total / 10**9, 2)} GB`;
+        });
+
+        memoryStats.addEventListener("mouseout", (event) => {
+            memoryStats.textContent = data.total.memory.percent + "%";
+        });
+
+        let storageOptions = getOptionData(null, false)
+        storageOptions.animation = true;
+        storageOptions.plugins.tooltip.enabled = true;
+        console.log(storageOptions)
         const storageGraph = new Chart("storage-graph", {
             type: 'doughnut',
             data: storageData,
-            options: getOptionData(null, false)
+            options: storageOptions
         });
 
-        memoryStats.addEventListener("mouseover", (event) => {
-            memoryStats.textContent = `${roundDecimal(data.total.memory.used / 10**9, 2)} GB / ${roundDecimal(data.total.memory.total / 10**9, 2)} GB`
+        data.by_dir.forEach((directory) => {
+            storageGraph.data.labels.push(directory[1]);
+            storageGraph.data.datasets[0].data.push(directory[0] / 10**6);
         });
-
-        memoryStats.addEventListener("onmouseout", (event) => {
-            memoryStats.textContent = data.total.memory.percent + "%";
-        });
+        storageGraph.update();
 
         setInterval(updateGraphs, 1000, cpuGraph, memoryGraph);
     });

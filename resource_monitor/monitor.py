@@ -12,7 +12,7 @@ app = Flask(
 
 def get_storage():
     result = subprocess.run(
-        ["du", "-h", "--max-depth=2", "."],
+        ["du", "--max-depth=2", "."],
         capture_output=True, 
         text=True
     )
@@ -38,8 +38,6 @@ def data_pid():
     total_cpu: float = 0
     total_mem: float = 0
 
-    stats["by_dir"].append(get_storage())
-
     for process in psutil.process_iter():
         stats["by_pid"].append({
             "pid": process.pid,
@@ -50,6 +48,8 @@ def data_pid():
         })
         total_cpu += process.cpu_percent()
         total_mem += process.memory_info().rss
+
+    stats["by_dir"] = get_storage()
 
     stats["total"]["cpu"] = {
         "usage": psutil.cpu_percent(interval=0.1),
@@ -70,6 +70,7 @@ def data_pid():
     }
     stats["total_cpu"] = total_cpu
     stats["total_mem"] = total_mem
+
     return stats
 
 
