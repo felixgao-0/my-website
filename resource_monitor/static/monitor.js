@@ -105,8 +105,7 @@ function updateGraphs(chartCpu, chartMemory) {
             MemoryData.datasets[1].data.push(roundDecimal(data.total.memory.used / 10**9, 2));
             MemoryData.datasets[1].data.shift();
 
-            memStats = document.getElementById("memory-usage");
-            memStats.textContent = data.total.memory.percent + "%";
+            updateMemoryTxt(data);
         }
         console.log("updated graphs");
         chartCpu.update();
@@ -116,6 +115,16 @@ function updateGraphs(chartCpu, chartMemory) {
 
 function roundDecimal(number, roundTo) {
     return parseFloat((number).toFixed(roundTo))
+}
+
+function updateMemoryTxt(data) {
+    const memoryStats = document.getElementById("memory-usage");
+    
+    if (memoryStats.matches(':hover')) {
+        memoryStats.textContent = `${roundDecimal(data.total.memory.used / 10**9, 2)} GB / ${roundDecimal(data.total.memory.total / 10**9, 2)} GB`
+    } else {
+        memoryStats.textContent = data.total.memory.percent + "%";
+    }
 }
 
 const cpuData = {
@@ -186,7 +195,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
         console.log("Loaded global data");
 
         cpuStats.textContent = data.total.cpu.usage + "%";
-        memoryStats.textContent = data.total.memory.percent + "%";
+        updateMemoryTxt(data);
         storageStats.textContent = data.total.storage.percent + "%";
 
         const cpuGraph = new Chart("cpu-graph", {
@@ -209,7 +218,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
         });
 
         memoryStats.addEventListener("mouseover", (event) => {
-            memoryStats.textContent = `${roundDecimal(data.total.memory.used / 10**9, 2)} GB /${roundDecimal(data.total.memory.total / 10**9, 2)} GB`
+            memoryStats.textContent = `${roundDecimal(data.total.memory.used / 10**9, 2)} GB / ${roundDecimal(data.total.memory.total / 10**9, 2)} GB`
         });
 
         memoryStats.addEventListener("onmouseout", (event) => {
