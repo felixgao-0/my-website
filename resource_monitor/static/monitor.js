@@ -168,7 +168,6 @@ function updateCpuTxt(data) {
     const cpuStats = document.getElementById("cpu-usage");
     let myCpuUsage = 0;
 
-    console.log(data)
     data.by_pid.forEach((process) => {
         myCpuUsage += process.cpu;
     });
@@ -178,6 +177,17 @@ function updateCpuTxt(data) {
     } else {
         cpuStats.textContent = roundDecimal(myCpuUsage, 2) + "%";
     }
+}
+
+// Thanks to
+// https://www.w3schools.com/howto/howto_css_button_group.asp
+// and ChatGPT for help on the js
+function selectButton(button, group) {
+    const buttons = document.querySelectorAll(`.graph-selector[data-group="${group}"] .toggle-button`); // Get all toggle-btn classes in a group in a graph-selector class
+    buttons.forEach(btn => {
+        btn.classList.remove('selected'); 
+    });
+    button.classList.add('selected');
 }
 
 const cpuData = {
@@ -265,7 +275,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
         cpuStats.addEventListener("mouseout", (event) => {
             let myCpuUsage = 0;
-            console.log(data)
             data.by_pid.forEach((process) => {
                 myCpuUsage += process.cpu;
             });
@@ -290,7 +299,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
         let storageOptions = getOptionData(null, false, null, " GB")
         storageOptions.animation = true;
         storageOptions.plugins.tooltip.enabled = true;
-        console.log(storageOptions)
         const storageGraph = new Chart("storage-graph", {
             type: 'doughnut',
             data: storageData,

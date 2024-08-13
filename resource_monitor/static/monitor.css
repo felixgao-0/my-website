@@ -37,3 +37,32 @@ h1, h2 {
     display: flex;
     align-items: center;
 }
+
+.toggle-button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #3333ff;
+    color: #FFFFFF;
+    font-size: 16px;
+    cursor: pointer;
+    outline: none;
+    transition: background-color 0.3s;
+}
+
+.toggle-button:hover {
+    background-color: #0000e6;
+}
+
+.toggle-button.selected {
+    background-color: #0000b3;
+}
+
+.toggle-button-left {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.toggle-button-right {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
