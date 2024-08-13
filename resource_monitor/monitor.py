@@ -45,7 +45,10 @@ def get_cmd_data():
         text=True
     )
 
-    return "coming toom tm"
+    return {
+        "top": sys_vitals.stdout,
+        "nest": 'Disk usage: 0.0 GB used out of 15.0 GB limit\nMemory usage: 0.05 GB used out of 2.0 GB limit\n' # Sample response from the nest cli
+    }
 
 
 status_emojis = {

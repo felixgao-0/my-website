@@ -1,3 +1,9 @@
+// Global variables
+//    Charts:
+// WIP
+//    The Stat Texts:
+// WIP
+
 function getOptionData(limit, addScale, scaleMax = 100, unit = "%") {
     let options = {
         plugins: {
@@ -156,7 +162,7 @@ function roundDecimal(number, roundTo) {
 
 function updateMemoryTxt(data) {
     const memoryStats = document.getElementById("memory-usage");
-    
+
     if (memoryStats.matches(':hover')) {
         memoryStats.textContent = `${roundDecimal(data.total.memory.used / 10**9, 2)} GB / ${roundDecimal(data.total.memory.total / 10**9, 2)} GB`
     } else {
@@ -191,13 +197,30 @@ function selectButton(button, group) {
         btn.classList.remove('selected'); 
     });
     button.classList.add('selected');
-    
+
     if (group == "storage-options") {
-        if (button.name == "global-usage") {
-            console.log("global coming soon tm")
-        } else if (button.name == "directory-usage") {
-            console.log("directory coming soon tm")
-        }
+        fetch("/data")
+        .then((response) => response.json())
+        .then((data) => {
+            data.by_dir.forEach((directory) => {
+                if (directory[1] == ".") { // Ignore the root filepath
+                    return
+                }
+                else if (directory[1] == "total") { // Get total storage usage
+                    myStorageUsage = directory[0]
+                }
+                
+                if (button.name == "directory-usage") {
+                    storageGraph.data.labels.push(directory[1]);
+                    storageGraph.data.datasets[0].data.push(directory[0] / 10**6);
+                }
+            });
+
+            if (button.name == "global-usage") {
+                storageGraph.data.labels = ["My Usage", "Storage Left", "Other Usage"];
+                storageGraph.data.datasets[0].data = [myStorageUsage / (1024 ** 3), data.total.storage.free / (1024 ** 3), (data.total.storage.used - myStorageUsage) / (1024 ** 3)];
+            }
+        });
     }
 }
 
@@ -307,7 +330,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
             memoryStats.textContent = data.total.memory.percent + "%";
         });
 
-        let storageOptions = getOptionData(null, false, null, "GB")
+        let storageOptions = getOptionData(null, false, null, "GB");
         storageOptions.animation = true;
         storageOptions.plugins.tooltip.enabled = true;
         const storageGraph = new Chart("storage-graph", {
@@ -316,6 +339,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
             options: storageOptions
         });
 
+
         let myStorageUsage = null;
         data.by_dir.forEach((directory) => {
             // Add storage data :D
@@ -323,17 +347,13 @@ document.addEventListener("DOMContentLoaded", (event) => {
                 return
             }
             if (directory[1] == "total") { // Get total storage usage
-                myStorageUsage = directory[0]
+                myStorageUsage = directory[0];
             }
-            //storageGraph.data.labels.push(directory[1]);
-            //storageGraph.data.datasets[0].data.push(directory[0] / 10**6);
         });
-        storageGraph.data.labels.push("My Usage");
-        storageGraph.data.datasets[0].data.push(myStorageUsage / (1024 ** 3));
-        storageGraph.data.labels.push("Storage Left");
-        storageGraph.data.datasets[0].data.push(data.total.storage.free / (1024 ** 3));
-        storageGraph.data.labels.push("Other Usage");
-        storageGraph.data.datasets[0].data.push((data.total.storage.used - myStorageUsage) / (1024 ** 3));
+
+        storageGraph.data.labels = ["My Usage", "Storage Left", "Other Usage"];
+        storageGraph.data.datasets[0].data = [myStorageUsage / (1024 ** 3), data.total.storage.free / (1024 ** 3), (data.total.storage.used - myStorageUsage) / (1024 ** 3)];
+
         storageGraph.update();
 
         setInterval(updateGraphs, 1000, cpuGraph, memoryGraph);
