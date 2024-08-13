@@ -14,7 +14,7 @@ print(f"Current directory: {os.getcwd()}")
 
 def get_storage():
     result = subprocess.run(
-        ["du", "--max-depth=1", os.getcwd()],
+        ["du", "--max-depth=1", "-c", os.getcwd()],
         capture_output=True, 
         text=True
     )
@@ -40,7 +40,7 @@ def get_cmd_data():
     )"""
 
     sys_vitals = subprocess.run(
-        ["top" , "-n1"],
+        ["top" , "-n1" , "-b"],
         capture_output=True, 
         text=True
     )
@@ -48,6 +48,13 @@ def get_cmd_data():
     return "coming toom tm"
 
 
+status_emojis = {
+    "running": "🏃",
+    "sleeping": "😴",
+    "zombie": "🧟",
+    "stopped": "⏹️",
+    "disk-sleep": "💽"
+}
 @app.route('/data')
 def data_pid():
     stats: dict = {"by_pid": [], "total": {}, "by_dir": []}
@@ -63,7 +70,7 @@ def data_pid():
             "name": process.name(),
             "cpu": process.cpu_percent(),
             "memory": process.memory_info().rss,
-            "status": process.status()
+            "status": f"{process.status()} ({status_emojis.get(process.status())})"
         })
         total_cpu += process.cpu_percent()
         total_mem += process.memory_info().rss

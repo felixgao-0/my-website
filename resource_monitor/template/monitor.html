@@ -25,9 +25,9 @@
             <p id="cpu-usage"></p>
             
             <div class="graph-selector" data-group="cpu-options">
-                <button class="toggle-button selected" onclick="selectButton(this, 'cpu-options')">Global Usage</button>
-                <button class="toggle-button" onclick="selectButton(this, 'cpu-options')">Per-Core Usage</button>
-                <button class="toggle-button" onclick="selectButton(this, 'cpu-options')">Process Usage</button>
+                <button class="toggle-button selected" onclick="selectButton(this, 'cpu-options')" name="global-usage">Global Usage</button>
+                <button class="toggle-button" onclick="selectButton(this, 'cpu-options')" name="core-usage">Per-Core Usage</button>
+                <button class="toggle-button" onclick="selectButton(this, 'cpu-options')" name="process-usage">Process Usage</button>
             </div>
         </div>
 
@@ -40,8 +40,8 @@
             <p id="memory-usage"></p>
 
             <div class="graph-selector" data-group="memory-options">
-                <button class="toggle-button selected" onclick="selectButton(this, 'memory-options')">Global Usage</button>
-                <button class="toggle-button" onclick="selectButton(this, 'memory-options')">Process Usage</button>
+                <button class="toggle-button selected" onclick="selectButton(this, 'memory-options')" name="global-usage">Global Usage</button>
+                <button class="toggle-button" onclick="selectButton(this, 'memory-options')" name="process-usage">Process Usage</button>
             </div>
         </div>
 
@@ -54,8 +54,8 @@
             <p id="storage-usage"></p>
 
             <div class="graph-selector" data-group="storage-options">
-                <button class="toggle-button selected" onclick="selectButton(this, 'storage-options')">Global Usage</button>
-                <button class="toggle-button" onclick="selectButton(this, 'storage-options')">By Directory</button>
+                <button class="toggle-button selected" onclick="selectButton(this, 'storage-options')" name="global-usage">Global Usage</button>
+                <button class="toggle-button" onclick="selectButton(this, 'storage-options')" name="directory-usage">By Directory</button>
             </div>
         </div>
 

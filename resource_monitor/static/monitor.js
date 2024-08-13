@@ -88,7 +88,7 @@ function updateGraphs(chartCpu, chartMemory) {
         MemoryData.labels.push("");
         MemoryData.labels.shift();
 
-        if (data === null) {
+        if (data === null) { // Print nothing when data missing for whatever reason
             CpuData.datasets[0].data.push(null);
             CpuData.datasets[0].data.shift();
             CpuData.datasets[1].data.push(null);
@@ -118,9 +118,9 @@ function updateGraphs(chartCpu, chartMemory) {
 
             updateMemoryTxt(data);
         }
-        
+
         // Display data in chart
-        
+
         // CREDIT: Thanks stackoverflow
         // https://stackoverflow.com/questions/16270087/delete-all-rows-on-a-table-except-first-with-javascript
         var rows = table.rows;
@@ -184,10 +184,21 @@ function updateCpuTxt(data) {
 // and ChatGPT for help on the js
 function selectButton(button, group) {
     const buttons = document.querySelectorAll(`.graph-selector[data-group="${group}"] .toggle-button`); // Get all toggle-btn classes in a group in a graph-selector class
+    if (button.classList.contains('selected')) {
+        return // Don't do anything if pressed btn alr selected
+    }
     buttons.forEach(btn => {
         btn.classList.remove('selected'); 
     });
     button.classList.add('selected');
+    
+    if (group == "storage-options") {
+        if (button.name == "global-usage") {
+            console.log("global coming soon tm")
+        } else if (button.name == "directory-usage") {
+            console.log("directory coming soon tm")
+        }
+    }
 }
 
 const cpuData = {
@@ -305,14 +316,24 @@ document.addEventListener("DOMContentLoaded", (event) => {
             options: storageOptions
         });
 
+        let myStorageUsage = null;
         data.by_dir.forEach((directory) => {
             // Add storage data :D
             if (directory[1] == ".") { // Ignore the root filepath
                 return
             }
-            storageGraph.data.labels.push(directory[1]);
-            storageGraph.data.datasets[0].data.push(directory[0] / 10**6);
+            if (directory[1] == "total") { // Get total storage usage
+                myStorageUsage = directory[0]
+            }
+            //storageGraph.data.labels.push(directory[1]);
+            //storageGraph.data.datasets[0].data.push(directory[0] / 10**6);
         });
+        storageGraph.data.labels.push("My Usage");
+        storageGraph.data.datasets[0].data.push(myStorageUsage / (1024 ** 3));
+        storageGraph.data.labels.push("Storage Left");
+        storageGraph.data.datasets[0].data.push(data.total.storage.free / (1024 ** 3));
+        storageGraph.data.labels.push("Other Usage");
+        storageGraph.data.datasets[0].data.push((data.total.storage.used - myStorageUsage) / (1024 ** 3));
         storageGraph.update();
 
         setInterval(updateGraphs, 1000, cpuGraph, memoryGraph);
