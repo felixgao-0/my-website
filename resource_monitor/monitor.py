@@ -30,6 +30,23 @@ def get_storage():
 def index():
     return flask.render_template("monitor.html")
 
+@app.route("/run_commands")
+def get_cmd_data():
+    """ Nest cli not in replit so commented out ):
+    nest_cli = subprocess.run(
+        ["nest", "resources"],
+        capture_output=True, 
+        text=True
+    )"""
+
+    sys_vitals = subprocess.run(
+        ["top" , "-n1"],
+        capture_output=True, 
+        text=True
+    )
+
+    return "coming toom tm"
+
 
 @app.route('/data')
 def data_pid():

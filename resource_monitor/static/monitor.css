@@ -11,7 +11,7 @@
 }
 
 tr:nth-child(even) {
-   background-color: #dddddd;
+    background-color: #dddddd;
 }
 
 th, td {
@@ -21,24 +21,30 @@ th, td {
     box-sizing: border-box;
 }
 
-p {
-  font-family: "Roboto", sans-serif;
-  font-weight: 400;
-  font-style: normal;
+p, th, td {
+    font-family: "Roboto", sans-serif;
+    font-weight: 400;
+    font-style: normal;
 }
 
 h1, h2 {
-  font-family: "Roboto", sans-serif;
-  font-weight: 500;
-  font-style: normal;
+    font-family: "Roboto", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+}
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .graph-selector {
     display: flex;
-    align-items: center;
 }
 
 .toggle-button {
+    display: flex;
     padding: 10px 20px;
     border: none;
     background-color: #3333ff;
@@ -57,12 +63,12 @@ h1, h2 {
     background-color: #0000b3;
 }
 
-.toggle-button-left {
-    border-top-left-radius: 5px;
-    border-bottom-left-radius: 5px;
+.toggle-button:first-child {
+    border-top-left-radius: 7px;
+    border-bottom-left-radius: 7px;
 }
 
-.toggle-button-right {
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
+.toggle-button:last-child {
+    border-top-right-radius: 7px;
+    border-bottom-right-radius: 7px;
 }

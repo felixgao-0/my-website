@@ -140,10 +140,10 @@ function updateGraphs(chartCpu, chartMemory) {
         let totalRow = table.insertRow(table.rows.length);
         totalRow.insertCell(0).textContent = 'TOTAL:';
         totalRow.insertCell(1).textContent = '';
-        totalRow.insertCell(2).textContent = myCpuUsage;
+        totalRow.insertCell(2).textContent = roundDecimal(myCpuUsage, 2);
         totalRow.insertCell(3).textContent = roundDecimal(myMemUsage / 10**9, 2);
         totalRow.insertCell(4).textContent = '';
-        
+
         console.log("updated graphs");
         chartCpu.update();
         chartMemory.update();
@@ -296,7 +296,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
             memoryStats.textContent = data.total.memory.percent + "%";
         });
 
-        let storageOptions = getOptionData(null, false, null, " GB")
+        let storageOptions = getOptionData(null, false, null, "GB")
         storageOptions.animation = true;
         storageOptions.plugins.tooltip.enabled = true;
         const storageGraph = new Chart("storage-graph", {

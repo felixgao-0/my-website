@@ -21,24 +21,28 @@
 
     <div>
         <h2>CPU Usage</h2>
-        <div class="graph-selector" data-group="cpu-options">
+        <div class="container">
             <p id="cpu-usage"></p>
-
-            <button class="toggle-button toggle-button-left" onclick="selectButton(this, 'cpu-options')">Global Usage</button>
-            <button class="toggle-button" onclick="selectButton(this, 'cpu-options')">Per-Core Usage</button>
-            <button class="toggle-button toggle-button-right" onclick="selectButton(this, 'cpu-options')">Process Usage</button>
+            
+            <div class="graph-selector" data-group="cpu-options">
+                <button class="toggle-button selected" onclick="selectButton(this, 'cpu-options')">Global Usage</button>
+                <button class="toggle-button" onclick="selectButton(this, 'cpu-options')">Per-Core Usage</button>
+                <button class="toggle-button" onclick="selectButton(this, 'cpu-options')">Process Usage</button>
+            </div>
         </div>
-        
+
         <canvas id="cpu-graph" class="line-graph"></canvas>
     </div>
 
     <div>
         <h2>Memory Usage</h2>
-        <div class="graph-selector">
+        <div class="container">
             <p id="memory-usage"></p>
 
-            <button class="toggle-button">Global Usage</button>
-            <button class="toggle-button">Process Usage</button>
+            <div class="graph-selector" data-group="memory-options">
+                <button class="toggle-button selected" onclick="selectButton(this, 'memory-options')">Global Usage</button>
+                <button class="toggle-button" onclick="selectButton(this, 'memory-options')">Process Usage</button>
+            </div>
         </div>
 
         <canvas id="memory-graph" class="line-graph"></canvas>
@@ -46,14 +50,16 @@
 
     <div>
         <h2>Storage Usage</h2>
-        <div class="graph-selector">
+        <div class="container">
             <p id="storage-usage"></p>
 
-            <button class="toggle-button">Global Usage</button>
-            <button class="toggle-button">By Directory</button>
+            <div class="graph-selector" data-group="storage-options">
+                <button class="toggle-button selected" onclick="selectButton(this, 'storage-options')">Global Usage</button>
+                <button class="toggle-button" onclick="selectButton(this, 'storage-options')">By Directory</button>
+            </div>
         </div>
 
-        <canvas id="storage-graph" style="width:100%;max-width:700px"></canvas>
+        <canvas id="storage-graph"></canvas>
     </div>
 
     <div>
@@ -67,6 +73,11 @@
                 <th style="width:20%;">Status</th>
             </tr>
         </table>
+    </div>
+
+    <div>
+        <p>[stuff goes here]</p>
+        <button onclick="">Reload</button>
     </div>
 </body>
 </html>
