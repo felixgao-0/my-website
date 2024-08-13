@@ -1,8 +1,16 @@
-// Global variables
+// Global variables (All null until dom loads to set them)
 //    Charts:
-// WIP
+let cpuGraph = null;
+let memoryGraph = null;
+let storageGraph = null;
 //    The Stat Texts:
-// WIP
+let table = null;
+
+let cpuStats = null;
+let memoryStats = null;
+let storageStats = null;
+// end global variables
+
 
 function getOptionData(limit, addScale, scaleMax = 100, unit = "%") {
     let options = {
@@ -69,7 +77,7 @@ function getOptionData(limit, addScale, scaleMax = 100, unit = "%") {
     return options
 }
 
-function updateGraphs(chartCpu, chartMemory) {
+function updateGraphs() {
     fetch("/data")
     .then((response) => {
         if (response.status === 200) {
@@ -82,8 +90,8 @@ function updateGraphs(chartCpu, chartMemory) {
     .then((data) => {
         const table = document.getElementById("pid-chart");
         
-        let CpuData = chartCpu.data;
-        let MemoryData = chartMemory.data;
+        let CpuData = cpuGraph.data;
+        let MemoryData = memoryGraph.data;
 
         let myCpuUsage = 0;
         let myMemUsage = 0;
@@ -151,8 +159,8 @@ function updateGraphs(chartCpu, chartMemory) {
         totalRow.insertCell(4).textContent = '';
 
         console.log("updated graphs");
-        chartCpu.update();
-        chartMemory.update();
+        cpuGraph.update();
+        memoryGraph.update();
     });
 }
 
@@ -161,8 +169,6 @@ function roundDecimal(number, roundTo) {
 }
 
 function updateMemoryTxt(data) {
-    const memoryStats = document.getElementById("memory-usage");
-
     if (memoryStats.matches(':hover')) {
         memoryStats.textContent = `${roundDecimal(data.total.memory.used / 10**9, 2)} GB / ${roundDecimal(data.total.memory.total / 10**9, 2)} GB`
     } else {
@@ -171,7 +177,6 @@ function updateMemoryTxt(data) {
 }
 
 function updateCpuTxt(data) {
-    const cpuStats = document.getElementById("cpu-usage");
     let myCpuUsage = 0;
 
     data.by_pid.forEach((process) => {
@@ -198,28 +203,50 @@ function selectButton(button, group) {
     });
     button.classList.add('selected');
 
-    if (group == "storage-options") {
+    console.log(group)
+    if (group == "memory-options") {
         fetch("/data")
         .then((response) => response.json())
         .then((data) => {
+            return
+        });
+    } else if (group == "cpu-options") {
+        fetch("/data")
+        .then((response) => response.json())
+        .then((data) => {
+            return
+        });
+    } else if (group == "storage-options") {
+        fetch("/data")
+        .then((response) => response.json())
+        .then((data) => {
+            let chart_labels = [];
+            let chart_data = [];
             data.by_dir.forEach((directory) => {
-                if (directory[1] == ".") { // Ignore the root filepath
+                if (directory[1] == "." || directory[1] == "/home/runner/Nest-Website") { // Ignore the root filepaths
                     return
                 }
                 else if (directory[1] == "total") { // Get total storage usage
                     myStorageUsage = directory[0]
+                    return
                 }
-                
-                if (button.name == "directory-usage") {
-                    storageGraph.data.labels.push(directory[1]);
-                    storageGraph.data.datasets[0].data.push(directory[0] / 10**6);
+
+                else if (button.name == "directory-usage") {
+                    chart_labels.push(directory[1]);
+                    chart_data.push(directory[0] / 10**6);
                 }
             });
 
             if (button.name == "global-usage") {
+                console.log("global usage lol")
                 storageGraph.data.labels = ["My Usage", "Storage Left", "Other Usage"];
                 storageGraph.data.datasets[0].data = [myStorageUsage / (1024 ** 3), data.total.storage.free / (1024 ** 3), (data.total.storage.used - myStorageUsage) / (1024 ** 3)];
+            } else if (button.name == "directory-usage") {
+                storageGraph.data.labels = chart_labels;
+                storageGraph.data.datasets[0].data = chart_data;
             }
+
+            storageGraph.update();
         });
     }
 }
@@ -281,11 +308,11 @@ const storageData = {
 document.addEventListener("DOMContentLoaded", (event) => {
     console.log("DOM has fully loaded");
 
-    const table = document.getElementById("pid-chart");
-
-    const cpuStats = document.getElementById("cpu-usage");
-    const memoryStats = document.getElementById("memory-usage");
-    const storageStats = document.getElementById("storage-usage");
+    // Set global variables on DOM loading
+    chart = document.getElementById("pid-chart");
+    cpuStats = document.getElementById("cpu-usage");
+    memoryStats = document.getElementById("memory-usage");
+    storageStats = document.getElementById("storage-usage");
 
     // Get data
     fetch("/data")
@@ -297,7 +324,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
         updateMemoryTxt(data);
         storageStats.textContent = data.total.storage.percent + "%";
 
-        const cpuGraph = new Chart("cpu-graph", {
+        cpuGraph = new Chart("cpu-graph", {
             type: 'line',
             data: cpuData,
             options: getOptionData(null, true)
@@ -316,7 +343,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
         });
 
         // We need global data to set this graph
-        const memoryGraph = new Chart("memory-graph", {
+        memoryGraph = new Chart("memory-graph", {
             type: 'line',
             data: memoryData,
             options: getOptionData(2, true, roundDecimal(data.total.memory.total / 10**9, 2), " GB") // Round and convert to gb
@@ -333,7 +360,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
         let storageOptions = getOptionData(null, false, null, "GB");
         storageOptions.animation = true;
         storageOptions.plugins.tooltip.enabled = true;
-        const storageGraph = new Chart("storage-graph", {
+        
+        storageGraph = new Chart("storage-graph", {
             type: 'doughnut',
             data: storageData,
             options: storageOptions
@@ -356,6 +384,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
         storageGraph.update();
 
-        setInterval(updateGraphs, 1000, cpuGraph, memoryGraph);
+        setInterval(updateGraphs, 1000);
     });
 });
