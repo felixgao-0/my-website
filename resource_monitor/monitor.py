@@ -16,20 +16,13 @@ app = Flask(
 
 print(f"Current directory: {os.getcwd()}")
 
-class Data_history:
-    def __init__(self, *, size_limit=15):
-        self.data = []
-        self.size_limit = size_limit
-    def get(self):
-        return self.data
-    def add(self, item: dict):
-        self.data.append(item)
-        if len(self.data) > self.size_limit:
-            self.data.pop(0)
-
-
-data_history = Data_history()
-
+status_emojis = {
+    "running": "🏃",
+    "sleeping": "😴",
+    "zombie": "🧟",
+    "stopped": "⏹️",
+    "disk-sleep": "💽"
+}
 
 def get_storage():
     result = subprocess.run(
@@ -48,6 +41,7 @@ def get_storage():
 @app.route('/')
 def index():
     return flask.render_template("monitor.html")
+
 
 @app.route("/run_commands")
 def get_cmd_data():
@@ -68,72 +62,61 @@ def get_cmd_data():
         "top": sys_vitals.stdout,
         "nest": 'Disk usage: 0.0 GB used out of 15.0 GB limit\nMemory usage: 0.05 GB used out of 2.0 GB limit\n' # Sample response from the nest cli cause this is replit
     }
-
-
-status_emojis = {
-    "running": "🏃",
-    "sleeping": "😴",
-    "zombie": "🧟",
-    "stopped": "⏹️",
-    "disk-sleep": "💽"
-}
+    
 
 @app.route('/data')
 def data_pid():
-    return data_history.get()[-1] # Data history not implemented yet
+    stats: dict = {"by_pid": [], "total": {}, "by_dir": []}
+    memory = psutil.virtual_memory()
+    storage = psutil.disk_usage('/')
 
-def add_data():
-    while True:
-        stats: dict = {"by_pid": [], "total": {}, "by_dir": []}
-        memory = psutil.virtual_memory()
-        storage = psutil.disk_usage('/')
+    total_cpu: float = 0
+    total_mem: float = 0
 
-        total_cpu: float = 0
-        total_mem: float = 0
+    for process in psutil.process_iter():
+        stats["by_pid"].append({
+            "pid": process.pid,
+            "name": process.name(),
+            "cpu": process.cpu_percent(),
+            "memory": process.memory_info().rss,
+            "status": f"{process.status()} ({status_emojis.get(process.status())})"
+        })
+        total_cpu += process.cpu_percent()
+        total_mem += process.memory_info().rss
 
-        for process in psutil.process_iter():
-            stats["by_pid"].append({
-                "pid": process.pid,
-                "name": process.name(),
-                "cpu": process.cpu_percent(),
-                "memory": process.memory_info().rss,
-                "status": f"{process.status()} ({status_emojis.get(process.status())})"
-            })
-            total_cpu += process.cpu_percent()
-            total_mem += process.memory_info().rss
+    stats["by_dir"] = get_storage()
 
-        stats["by_dir"] = get_storage()
+    stats["total"]["cpu"] = {
+        "usage": psutil.cpu_percent(interval=0.1),
+        "frequency": psutil.cpu_freq().current,
+        "per-core": psutil.cpu_percent(interval=0.1, percpu=True)
+    }
+    stats["total"]["memory"] = {
+        "free": memory.available,
+        "used": memory.used,
+        "total": memory.total,
+        "percent": memory.percent
+    }
+    stats["total"]["storage"] = {
+        "total": storage.total,
+        "used": storage.used,
+        "free": storage.free,
+        "percent": storage.percent
+    }
+    stats["total_cpu"] = total_cpu
+    stats["total_mem"] = total_mem
 
-        stats["total"]["cpu"] = {
-            "usage": psutil.cpu_percent(interval=0.1),
-            "frequency": psutil.cpu_freq().current,
-            "per-core": psutil.cpu_percent(interval=0.1, percpu=True)
-        }
-        stats["total"]["memory"] = {
-            "free": memory.available,
-            "used": memory.used,
-            "total": memory.total,
-            "percent": memory.percent
-        }
-        stats["total"]["storage"] = {
-            "total": storage.total,
-            "used": storage.used,
-            "free": storage.free,
-            "percent": storage.percent
-        }
-        stats["total_cpu"] = total_cpu
-        stats["total_mem"] = total_mem
+    #data = stats
 
-        data_history.add(stats)
+    return stats
 
-        # Make data update every second, on the second
-        # CREDIT: thx chatgpt for the help
-        now = time.time()
-        next_second = (now // 1 + 1)
-        wait_time = next_second - now
-        time.sleep(wait_time)
-
-thread = threading.Thread(target=add_data)
-thread.start()
+    # Make data update every second, on the second
+    # CREDIT: thx chatgpt for the help
+    """
+    now = time.time()
+    next_second = (now // 1 + 1)
+    wait_time = next_second - now
+    time.sleep(wait_time)
+    """
 
 app.run(host='0.0.0.0', port=8080, debug=True)
