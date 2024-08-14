@@ -168,14 +168,6 @@ function roundDecimal(number, roundTo) {
     return parseFloat((number).toFixed(roundTo))
 }
 
-function updateMemoryTxt(data) {
-    if (memoryStats.matches(':hover')) {
-        memoryStats.textContent = `${roundDecimal(data.total.memory.used / 10**9, 2)} GB / ${roundDecimal(data.total.memory.total / 10**9, 2)} GB`
-    } else {
-        memoryStats.textContent = data.total.memory.percent + "%";
-    }
-}
-
 function updateCpuTxt(data) {
     let myCpuUsage = 0;
 
@@ -184,15 +176,31 @@ function updateCpuTxt(data) {
     });
 
     if (cpuStats.matches(':hover')) {
-        cpuStats.textContent = `Global Usage: ${data.total.cpu.usage}%`
+        cpuStats.textContent = `Global Usage: ${data.total.cpu.usage}%`;
     } else {
         cpuStats.textContent = roundDecimal(myCpuUsage, 2) + "%";
     }
 }
 
+function updateMemoryTxt(data) {
+    if (memoryStats.matches(':hover')) {
+        memoryStats.textContent = `${roundDecimal(data.total.memory.used / 10**9, 2)} GB / ${roundDecimal(data.total.memory.total / 10**9, 2)} GB`;
+    } else {
+        memoryStats.textContent = data.total.memory.percent + "%";
+    }
+}
+
+function updateStorageTxt(data) {
+    if (storageStats.matches(':hover')) {
+        storageStats.textContent = `${roundDecimal(data.total.storage.used / 10**9, 2)} GB / ${roundDecimal(data.total.storage.total / 10**9, 2)} GB`
+    } else {
+        storageStats.textContent = data.total.storage.percent + "%";
+    }
+}
+
 // Thanks to
 // https://www.w3schools.com/howto/howto_css_button_group.asp
-// and ChatGPT for help on the js
+// and ChatGPT for help on some of the js
 function selectButton(button, group) {
     const buttons = document.querySelectorAll(`.graph-selector[data-group="${group}"] .toggle-button`); // Get all toggle-btn classes in a group in a graph-selector class
     if (button.classList.contains('selected')) {
@@ -322,7 +330,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
         updateCpuTxt(data);
         updateMemoryTxt(data);
-        storageStats.textContent = data.total.storage.percent + "%";
+        updateStorageTxt(data);
 
         cpuGraph = new Chart("cpu-graph", {
             type: 'line',
@@ -330,17 +338,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
             options: getOptionData(null, true)
         });
 
-        cpuStats.addEventListener("mouseover", (event) => {
-            cpuStats.textContent = `Global Usage: ${data.total.cpu.usage}%`
-        });
-
-        cpuStats.addEventListener("mouseout", (event) => {
-            let myCpuUsage = 0;
-            data.by_pid.forEach((process) => {
-                myCpuUsage += process.cpu;
-            });
-            cpuStats.textContent = roundDecimal(myCpuUsage, 2) + "%";
-        });
+        cpuStats.addEventListener("mouseover", (event) => updateCpuTxt(data));
+        cpuStats.addEventListener("mouseout", (event) => updateCpuTxt(data));
 
         // We need global data to set this graph
         memoryGraph = new Chart("memory-graph", {
@@ -349,23 +348,21 @@ document.addEventListener("DOMContentLoaded", (event) => {
             options: getOptionData(2, true, roundDecimal(data.total.memory.total / 10**9, 2), " GB") // Round and convert to gb
         });
 
-        memoryStats.addEventListener("mouseover", (event) => {
-            memoryStats.textContent = `${roundDecimal(data.total.memory.used / 10**9, 2)} GB / ${roundDecimal(data.total.memory.total / 10**9, 2)} GB`;
-        });
-
-        memoryStats.addEventListener("mouseout", (event) => {
-            memoryStats.textContent = data.total.memory.percent + "%";
-        });
+        memoryStats.addEventListener("mouseover", (event) => updateMemoryTxt(data));
+        memoryStats.addEventListener("mouseout", (event) => updateMemoryTxt(data));
 
         let storageOptions = getOptionData(null, false, null, "GB");
         storageOptions.animation = true;
         storageOptions.plugins.tooltip.enabled = true;
-        
+
         storageGraph = new Chart("storage-graph", {
             type: 'doughnut',
             data: storageData,
             options: storageOptions
         });
+
+        storageStats.addEventListener("mouseover", (event) => updateStorageTxt(data));
+        storageStats.addEventListener("mouseout", (event) => updateStorageTxt(data));
 
 
         let myStorageUsage = null;
