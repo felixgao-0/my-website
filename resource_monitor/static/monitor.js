@@ -18,8 +18,8 @@ let cpuDataset = {
         myUsage: Array(30).fill(null)
     },
     perCore: Array(30).fill(null), // This will contain further arrays for each core
-    frequency: [], // This will contain each process as a object
-    dataSource: "global",
+    frequency: Array(30).fill(null),
+    dataSource: "global-usage",
     changeSource: false
 };
 
@@ -29,7 +29,7 @@ let memoryDataset = {
         myUsage: Array(30).fill(null)
     },
     perProcess: [], // This will contain each process as a object
-    dataSource: "global",
+    dataSource: "global-usage",
     changeSource: false
 };
 // end global variables
@@ -113,9 +113,6 @@ function updateGraphs() {
     .then((data) => {
         const table = document.getElementById("pid-chart");
 
-        let cpuGraphData = cpuGraph.data;
-        let memoryGraphData = memoryGraph.data;
-
         let myCpuUsage = 0;
         let myMemUsage = 0;
 
@@ -127,16 +124,23 @@ function updateGraphs() {
         }
 
         if (data === null) { // Print nothing when data missing for whatever reason
-            pushShift(cpuGraphData.datasets[0].data, null);
-            pushShift(cpuGraphData.datasets[1].data, null);
+            pushShift(cpuGraph.data.datasets[0].data, null);
+            pushShift(cpuGraph.data.datasets[1].data, null);
 
-            pushShift(memoryGraphData.datasets[0].data, null);
-            pushShift(memoryGraphData.datasets[1].data, null);
+            pushShift(memoryGraph.data.datasets[0].data, null);
+            pushShift(memoryGraph.data.datasets[1].data, null);
         } else {
             // CPU Data
             data.by_pid.forEach((process) => {
                 myCpuUsage += process.cpu;
                 myMemUsage += process.memory;
+
+                let newRow = table.insertRow(table.rows.length);
+                newRow.insertCell(0).textContent = process.pid;
+                newRow.insertCell(1).textContent = process.name;
+                newRow.insertCell(2).textContent = process.cpu;
+                newRow.insertCell(3).textContent = roundDecimal(process.memory / 10**9, 2);
+                newRow.insertCell(4).textContent = process.status;
             });
 
             // Add global data
@@ -147,37 +151,43 @@ function updateGraphs() {
             pushShift(cpuDataset.frequency, roundDecimal(data.total.cpu["frequency"] / 1000, 2));
 
             // Add data to chart depending on chart type
-            if (cpuDataset.dataSource === "global") {
+            if (cpuDataset.dataSource === "global-usage") {
                 if (cpuDataset.changeSource === true) {
                     // TODO: Clear pervious dataset on change
                     cpuDataset.changeSource = false;
                 }
-                cpuGraphData.datasets[0].data = cpuDataset.global.myUsage;
-                cpuGraphData.datasets[1].data = cpuDataset.global.globalUsage;
+                cpuGraph.data.datasets[0].data = cpuDataset.global.myUsage;
+                cpuGraph.data.datasets[1].data = cpuDataset.global.globalUsage;
 
-                if (cpuDataset.global.myUsage >= cpuDataset.global.globalUsage) {
+                if (parseFloat(cpuDataset.global.myUsage.slice(-1)) >= parseFloat(cpuDataset.global.globalUsage.slice(-1))) {
                     console.warn(`How on earch is my usage higher than global? Global is ${cpuDataset.global.globalUsage.slice(-1)}, mine is ${cpuDataset.global.myUsage.slice(-1)}`)
                 }
                 
-            } else if (cpuDataset.dataSource === "per-core") {
+            } else if (cpuDataset.dataSource === "core-usage") {
                 if (cpuDataset.changeSource === true) {
                     // TODO: Clear pervious dataset on change
                     cpuDataset.changeSource = false;
                 }
-                // TODO: Per core usage
+                cpuDataset.perCore.forEach((period) => {
+                    let i = 0;
+                    period.perCore.forEach((coreFreq) => {
+                        cpuGraph.data.datasets[i].data = cpuDataset.coreFreq;
+                        i++;
+                    })
+                })
             } else if (cpuDataset.dataSource === "frequency") {
                 if (cpuDataset.changeSource === true) {
                     // TODO: Clear pervious dataset on change
                     cpuDataset.changeSource = false;
                 }
-                // TODO: Per core freq
+                cpuGraph.data.datasets[0].data = cpuDataset.frequency;
             }
 
             updateCpuTxt(data)
 
             // Memory Data
-            pushShift(memoryGraphData.datasets[0].data, roundDecimal(myMemUsage / 10**9, 2));
-            pushShift(memoryGraphData.datasets[1].data, roundDecimal(data.total.memory.used / 10**9, 2));
+            pushShift(memoryGraph.data.datasets[0].data, roundDecimal(myMemUsage / 10**9, 2));
+            pushShift(memoryGraph.data.datasets[1].data, roundDecimal(data.total.memory.used / 10**9, 2));
 
             updateMemoryTxt(data);
 
@@ -186,14 +196,6 @@ function updateGraphs() {
             // Display in chart
             // CREDIT: Thanks stackoverflow
             // https://stackoverflow.com/questions/16270087/delete-all-rows-on-a-table-except-first-with-javascript
-            data.by_pid.forEach((process) => {
-                let newRow = table.insertRow(table.rows.length);
-                newRow.insertCell(0).textContent = process.pid;
-                newRow.insertCell(1).textContent = process.name;
-                newRow.insertCell(2).textContent = process.cpu;
-                newRow.insertCell(3).textContent = roundDecimal(process.memory / 10**9, 2);
-                newRow.insertCell(4).textContent = process.status;
-            });
             let totalRow = table.insertRow(table.rows.length);
 
             // Display a total
@@ -265,7 +267,6 @@ function selectButton(button, group) {
     });
     button.classList.add('selected');
 
-    console.log(group)
     if (group == "memory-options") {
         fetch("/data")
         .then((response) => response.json())
@@ -276,7 +277,8 @@ function selectButton(button, group) {
         fetch("/data")
         .then((response) => response.json())
         .then((data) => {
-            return
+            cpuDataset.dataSource = button.name;
+            console.log(`Hi! ${butoon.name}`)
         });
     } else if (group == "storage-options") {
         fetch("/data")
@@ -303,9 +305,12 @@ function selectButton(button, group) {
                 console.log("global usage lol")
                 storageGraph.data.labels = ["My Usage", "Storage Left", "Other Usage"];
                 storageGraph.data.datasets[0].data = [myStorageUsage / (1024 ** 3), data.total.storage.free / (1024 ** 3), (data.total.storage.used - myStorageUsage) / (1024 ** 3)];
+                storageGraph.data.datasets[0].backgroundColour = ['rgb(54, 162, 235)', 'rgb(211,211,211)', 'rgb(255, 99, 132)']
             } else if (button.name == "directory-usage") {
                 storageGraph.data.labels = chart_labels;
                 storageGraph.data.datasets[0].data = chart_data;
+                storageGraph.data.datasets[0].backgroundColour = [
+                    'rgb(255, 99, 132)', 'rgb(54, 162, 235)', 'rgb(255, 203, 92)', 'rgb(255, 163, 26)', 'rgb(92, 185, 94)', 'rgb(165, 56, 182)']
             }
 
             storageGraph.update();
@@ -432,6 +437,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
         storageGraph.data.labels = ["My Usage", "Storage Left", "Other Usage"];
         storageGraph.data.datasets[0].data = [myStorageUsage / (1024 ** 3), data.total.storage.free / (1024 ** 3), (data.total.storage.used - myStorageUsage) / (1024 ** 3)];
+        storageGraph.data.datasets[0].backgroundColour = ['rgb(54, 162, 235)', 'rgb(211,211,211)', 'rgb(255, 99, 132)']
 
         storageGraph.update();
 

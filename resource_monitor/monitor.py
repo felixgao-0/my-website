@@ -63,7 +63,7 @@ def get_cmd_data():
         "top": sys_vitals.stdout,
         "nest": 'Disk usage: 0.0 GB used out of 15.0 GB limit\nMemory usage: 0.05 GB used out of 2.0 GB limit\n' # Sample response from the nest cli cause this is replit
     }
-    
+
 
 @app.route('/data')
 def data_pid():
@@ -101,23 +101,12 @@ def data_pid():
     stats["total"]["storage"] = {
         "total": storage.total,
         "used": storage.used,
-        #"free": storage.free,
+        "free": storage.free,
         "percent": storage.percent
     }
     stats["total_cpu"] = total_cpu
     stats["total_mem"] = total_mem
-
-    #data = stats
-
+    
     return stats
-
-    # Make data update every second, on the second
-    # CREDIT: thx chatgpt for the help
-    """
-    now = time.time()
-    next_second = (now // 1 + 1)
-    wait_time = next_second - now
-    time.sleep(wait_time)
-    """
 
 app.run(host='0.0.0.0', port=8080, debug=True)
