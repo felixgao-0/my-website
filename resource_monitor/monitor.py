@@ -1,8 +1,12 @@
+import subprocess
+import threading
+import os
+import time
+
 from flask import Flask
 import flask
+
 import psutil
-import subprocess
-import os
 
 app = Flask(
     'app', 
@@ -11,6 +15,21 @@ app = Flask(
 )
 
 print(f"Current directory: {os.getcwd()}")
+
+class Data_history:
+    def __init__(self, *, size_limit=15):
+        self.data = []
+        self.size_limit = size_limit
+    def get(self):
+        return self.data
+    def add(self, item: dict):
+        self.data.append(item)
+        if len(self.data) > self.size_limit:
+            self.data.pop(0)
+
+
+data_history = Data_history()
+
 
 def get_storage():
     result = subprocess.run(
@@ -58,49 +77,63 @@ status_emojis = {
     "stopped": "⏹️",
     "disk-sleep": "💽"
 }
+
 @app.route('/data')
 def data_pid():
-    stats: dict = {"by_pid": [], "total": {}, "by_dir": []}
-    memory = psutil.virtual_memory()
-    storage = psutil.disk_usage('/')
+    return data_history.get()[-1] # Data history not implemented yet
 
-    total_cpu: float = 0
-    total_mem: float = 0
+def add_data():
+    while True:
+        stats: dict = {"by_pid": [], "total": {}, "by_dir": []}
+        memory = psutil.virtual_memory()
+        storage = psutil.disk_usage('/')
 
-    for process in psutil.process_iter():
-        stats["by_pid"].append({
-            "pid": process.pid,
-            "name": process.name(),
-            "cpu": process.cpu_percent(),
-            "memory": process.memory_info().rss,
-            "status": f"{process.status()} ({status_emojis.get(process.status())})"
-        })
-        total_cpu += process.cpu_percent()
-        total_mem += process.memory_info().rss
+        total_cpu: float = 0
+        total_mem: float = 0
 
-    stats["by_dir"] = get_storage()
+        for process in psutil.process_iter():
+            stats["by_pid"].append({
+                "pid": process.pid,
+                "name": process.name(),
+                "cpu": process.cpu_percent(),
+                "memory": process.memory_info().rss,
+                "status": f"{process.status()} ({status_emojis.get(process.status())})"
+            })
+            total_cpu += process.cpu_percent()
+            total_mem += process.memory_info().rss
 
-    stats["total"]["cpu"] = {
-        "usage": psutil.cpu_percent(interval=0.1),
-        "frequency": psutil.cpu_freq().current,
-        "per-core": psutil.cpu_percent(interval=0.1, percpu=True)
-    }
-    stats["total"]["memory"] = {
-        "free": memory.available,
-        "used": memory.used,
-        "total": memory.total,
-        "percent": memory.percent
-    }
-    stats["total"]["storage"] = {
-        "total": storage.total,
-        "used": storage.used,
-        "free": storage.free,
-        "percent": storage.percent
-    }
-    stats["total_cpu"] = total_cpu
-    stats["total_mem"] = total_mem
+        stats["by_dir"] = get_storage()
 
-    return stats
+        stats["total"]["cpu"] = {
+            "usage": psutil.cpu_percent(interval=0.1),
+            "frequency": psutil.cpu_freq().current,
+            "per-core": psutil.cpu_percent(interval=0.1, percpu=True)
+        }
+        stats["total"]["memory"] = {
+            "free": memory.available,
+            "used": memory.used,
+            "total": memory.total,
+            "percent": memory.percent
+        }
+        stats["total"]["storage"] = {
+            "total": storage.total,
+            "used": storage.used,
+            "free": storage.free,
+            "percent": storage.percent
+        }
+        stats["total_cpu"] = total_cpu
+        stats["total_mem"] = total_mem
 
+        data_history.add(stats)
+
+        # Make data update every second, on the second
+        # CREDIT: thx chatgpt for the help
+        now = time.time()
+        next_second = (now // 1 + 1)
+        wait_time = next_second - now
+        time.sleep(wait_time)
+
+thread = threading.Thread(target=add_data)
+thread.start()
 
 app.run(host='0.0.0.0', port=8080, debug=True)

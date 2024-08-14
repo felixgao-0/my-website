@@ -384,6 +384,14 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
         storageGraph.update();
 
-        setInterval(updateGraphs, 1000);
+        // Make charts update every second, on the second
+        // CREDIT: thx chatgpt for the help
+        const now = new Date();
+        const delay = 1000 - (now.getMilliseconds());
+
+        setTimeout(() => {
+            updateGraphs();
+            setInterval(updateGraphs, 1000);
+        }, delay);
     });
 });
