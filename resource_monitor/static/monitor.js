@@ -152,10 +152,11 @@ function updateGraphs() {
 
             // Add data to chart depending on chart type
             if (cpuDataset.dataSource === "global-usage") {
+                /*
                 if (cpuDataset.changeSource === true) {
                     // TODO: Clear pervious dataset on change
                     cpuDataset.changeSource = false;
-                }
+                } */
                 cpuGraph.data.datasets[0].data = cpuDataset.global.myUsage;
                 cpuGraph.data.datasets[1].data = cpuDataset.global.globalUsage;
 
@@ -164,10 +165,11 @@ function updateGraphs() {
                 }
                 
             } else if (cpuDataset.dataSource === "core-usage") {
+                /*
                 if (cpuDataset.changeSource === true) {
                     // TODO: Clear pervious dataset on change
                     cpuDataset.changeSource = false;
-                }
+                } */
                 cpuDataset.perCore.forEach((period) => {
                     let i = 0;
                     period.perCore.forEach((coreFreq) => {
@@ -176,10 +178,11 @@ function updateGraphs() {
                     })
                 })
             } else if (cpuDataset.dataSource === "frequency") {
+                /*
                 if (cpuDataset.changeSource === true) {
                     // TODO: Clear pervious dataset on change
                     cpuDataset.changeSource = false;
-                }
+                } */
                 cpuGraph.data.datasets[0].data = cpuDataset.frequency;
             }
 
@@ -278,7 +281,8 @@ function selectButton(button, group) {
         .then((response) => response.json())
         .then((data) => {
             cpuDataset.dataSource = button.name;
-            console.log(`Hi! ${butoon.name}`)
+            console.log(`Hi! ${button.name}`)
+            console.log(cpuDataset)
         });
     } else if (group == "storage-options") {
         fetch("/data")
