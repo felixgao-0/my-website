@@ -12,16 +12,26 @@ let memoryStats = null;
 let storageStats = null;
 
 //    Store graph data to use easily
-let cpuData = {
+let cpuDataset = {
     global: {
-        labels: [],
-        globalUsage: [],
-        myUsage: []
+        globalUsage: Array(30).fill(null),
+        myUsage: Array(30).fill(null)
     },
-    perCore: [], // This will contain further arrays for each core
-    perProcess: [] // This will contain each process as a object
+    perCore: Array(30).fill(null), // This will contain further arrays for each core
+    frequency: [], // This will contain each process as a object
+    dataSource: "global",
+    changeSource: false
 };
 
+let memoryDataset = {
+    global: {
+        globalUsage: Array(30).fill(null),
+        myUsage: Array(30).fill(null)
+    },
+    perProcess: [], // This will contain each process as a object
+    dataSource: "global",
+    changeSource: false
+};
 // end global variables
 
 
@@ -102,13 +112,14 @@ function updateGraphs() {
     })
     .then((data) => {
         const table = document.getElementById("pid-chart");
-        
-        let CpuData = cpuGraph.data;
-        let MemoryData = memoryGraph.data;
+
+        let cpuGraphData = cpuGraph.data;
+        let memoryGraphData = memoryGraph.data;
 
         let myCpuUsage = 0;
         let myMemUsage = 0;
 
+        // Clear rows on table before adding data
         var rows = table.rows;
         var i = rows.length;
         while (--i) {
@@ -116,15 +127,11 @@ function updateGraphs() {
         }
 
         if (data === null) { // Print nothing when data missing for whatever reason
-            CpuData.datasets[0].data.push(null);
-            CpuData.datasets[0].data.shift();
-            CpuData.datasets[1].data.push(null);
-            CpuData.datasets[1].data.shift();
+            pushShift(cpuGraphData.datasets[0].data, null);
+            pushShift(cpuGraphData.datasets[1].data, null);
 
-            MemoryData.datasets[0].data.push(null);
-            MemoryData.datasets[0].data.shift();
-            MemoryData.datasets[1].data.push(null);
-            MemoryData.datasets[1].data.shift();
+            pushShift(memoryGraphData.datasets[0].data, null);
+            pushShift(memoryGraphData.datasets[1].data, null);
         } else {
             // CPU Data
             data.by_pid.forEach((process) => {
@@ -132,18 +139,45 @@ function updateGraphs() {
                 myMemUsage += process.memory;
             });
 
-            CpuData.datasets[0].data.push(roundDecimal(myCpuUsage, 2));
-            CpuData.datasets[0].data.shift();
-            CpuData.datasets[1].data.push(data.total.cpu.usage);
-            CpuData.datasets[1].data.shift();
+            // Add global data
+            pushShift(cpuDataset.global.globalUsage, data.total.cpu.usage)
+            pushShift(cpuDataset.global.myUsage, roundDecimal(myCpuUsage, 2));
+            // Add core usage & frequency
+            pushShift(cpuDataset.perCore, data.total.cpu["per-core"]);
+            pushShift(cpuDataset.frequency, roundDecimal(data.total.cpu["frequency"] / 1000, 2));
+
+            // Add data to chart depending on chart type
+            if (cpuDataset.dataSource === "global") {
+                if (cpuDataset.changeSource === true) {
+                    // TODO: Clear pervious dataset on change
+                    cpuDataset.changeSource = false;
+                }
+                cpuGraphData.datasets[0].data = cpuDataset.global.myUsage;
+                cpuGraphData.datasets[1].data = cpuDataset.global.globalUsage;
+
+                if (cpuDataset.global.myUsage >= cpuDataset.global.globalUsage) {
+                    console.warn(`How on earch is my usage higher than global? Global is ${cpuDataset.global.globalUsage.slice(-1)}, mine is ${cpuDataset.global.myUsage.slice(-1)}`)
+                }
+                
+            } else if (cpuDataset.dataSource === "per-core") {
+                if (cpuDataset.changeSource === true) {
+                    // TODO: Clear pervious dataset on change
+                    cpuDataset.changeSource = false;
+                }
+                // TODO: Per core usage
+            } else if (cpuDataset.dataSource === "frequency") {
+                if (cpuDataset.changeSource === true) {
+                    // TODO: Clear pervious dataset on change
+                    cpuDataset.changeSource = false;
+                }
+                // TODO: Per core freq
+            }
 
             updateCpuTxt(data)
 
             // Memory Data
-            MemoryData.datasets[0].data.push(roundDecimal(myMemUsage / 10**9, 2));
-            MemoryData.datasets[0].data.shift();
-            MemoryData.datasets[1].data.push(roundDecimal(data.total.memory.used / 10**9, 2));
-            MemoryData.datasets[1].data.shift();
+            pushShift(memoryGraphData.datasets[0].data, roundDecimal(myMemUsage / 10**9, 2));
+            pushShift(memoryGraphData.datasets[1].data, roundDecimal(data.total.memory.used / 10**9, 2));
 
             updateMemoryTxt(data);
 
@@ -179,6 +213,13 @@ function updateGraphs() {
 
 function roundDecimal(number, roundTo) {
     return parseFloat((number).toFixed(roundTo))
+}
+
+function pushShift(array, item) {
+    // A quick function to push and shift an array
+    // to maintain the chart size
+    array.push(item);
+    array.shift();
 }
 
 function updateCpuTxt(data) {

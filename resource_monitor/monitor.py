@@ -78,7 +78,7 @@ def data_pid():
         stats["by_pid"].append({
             "pid": process.pid,
             "name": process.name(),
-            "cpu": process.cpu_percent(),
+            "cpu": process.cpu_percent(interval=0.1),
             "memory": process.memory_info().rss,
             "status": f"{process.status()} ({status_emojis.get(process.status())})"
         })
@@ -93,15 +93,15 @@ def data_pid():
         "per-core": psutil.cpu_percent(interval=0.1, percpu=True)
     }
     stats["total"]["memory"] = {
-        "free": memory.available,
-        "used": memory.used,
         "total": memory.total,
+        "used": memory.used,
+        #"free": memory.available,
         "percent": memory.percent
     }
     stats["total"]["storage"] = {
         "total": storage.total,
         "used": storage.used,
-        "free": storage.free,
+        #"free": storage.free,
         "percent": storage.percent
     }
     stats["total_cpu"] = total_cpu
