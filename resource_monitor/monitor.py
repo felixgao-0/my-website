@@ -16,6 +16,7 @@ app = Flask(
 
 print(f"Current directory: {os.getcwd()}")
 
+# Add emojis cause they look nice
 status_emojis = {
     "running": "🏃",
     "sleeping": "😴",

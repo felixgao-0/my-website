@@ -3,12 +3,25 @@
 let cpuGraph = null;
 let memoryGraph = null;
 let storageGraph = null;
+
 //    The Stat Texts:
 let table = null;
 
 let cpuStats = null;
 let memoryStats = null;
 let storageStats = null;
+
+//    Store graph data to use easily
+let cpuData = {
+    global: {
+        labels: [],
+        globalUsage: [],
+        myUsage: []
+    },
+    perCore: [], // This will contain further arrays for each core
+    perProcess: [] // This will contain each process as a object
+};
+
 // end global variables
 
 
@@ -96,11 +109,11 @@ function updateGraphs() {
         let myCpuUsage = 0;
         let myMemUsage = 0;
 
-        CpuData.labels.push("");
-        CpuData.labels.shift();
-
-        MemoryData.labels.push("");
-        MemoryData.labels.shift();
+        var rows = table.rows;
+        var i = rows.length;
+        while (--i) {
+            table.deleteRow(i);
+        }
 
         if (data === null) { // Print nothing when data missing for whatever reason
             CpuData.datasets[0].data.push(null);
@@ -113,6 +126,7 @@ function updateGraphs() {
             MemoryData.datasets[1].data.push(null);
             MemoryData.datasets[1].data.shift();
         } else {
+            // CPU Data
             data.by_pid.forEach((process) => {
                 myCpuUsage += process.cpu;
                 myMemUsage += process.memory;
@@ -125,39 +139,38 @@ function updateGraphs() {
 
             updateCpuTxt(data)
 
+            // Memory Data
             MemoryData.datasets[0].data.push(roundDecimal(myMemUsage / 10**9, 2));
             MemoryData.datasets[0].data.shift();
             MemoryData.datasets[1].data.push(roundDecimal(data.total.memory.used / 10**9, 2));
             MemoryData.datasets[1].data.shift();
 
             updateMemoryTxt(data);
+
+            // Storage Data
+            
+            // Display in chart
+            // CREDIT: Thanks stackoverflow
+            // https://stackoverflow.com/questions/16270087/delete-all-rows-on-a-table-except-first-with-javascript
+            data.by_pid.forEach((process) => {
+                let newRow = table.insertRow(table.rows.length);
+                newRow.insertCell(0).textContent = process.pid;
+                newRow.insertCell(1).textContent = process.name;
+                newRow.insertCell(2).textContent = process.cpu;
+                newRow.insertCell(3).textContent = roundDecimal(process.memory / 10**9, 2);
+                newRow.insertCell(4).textContent = process.status;
+            });
+            let totalRow = table.insertRow(table.rows.length);
+
+            // Display a total
+            totalRow.insertCell(0).textContent = 'TOTAL:';
+            totalRow.insertCell(1).textContent = '';
+            totalRow.insertCell(2).textContent = roundDecimal(myCpuUsage, 2);
+            totalRow.insertCell(3).textContent = roundDecimal(myMemUsage / 10**9, 2);
+            totalRow.insertCell(4).textContent = '';
         }
 
-        // Display data in chart
-
-        // CREDIT: Thanks stackoverflow
-        // https://stackoverflow.com/questions/16270087/delete-all-rows-on-a-table-except-first-with-javascript
-        var rows = table.rows;
-        var i = rows.length;
-        while (--i) {
-            table.deleteRow(i);
-        }
-
-        data.by_pid.forEach((process) => {
-            let newRow = table.insertRow(table.rows.length);
-            newRow.insertCell(0).textContent = process.pid;
-            newRow.insertCell(1).textContent = process.name;
-            newRow.insertCell(2).textContent = process.cpu;
-            newRow.insertCell(3).textContent = roundDecimal(process.memory / 10**9, 2);
-            newRow.insertCell(4).textContent = process.status;
-        });
-        let totalRow = table.insertRow(table.rows.length);
-        totalRow.insertCell(0).textContent = 'TOTAL:';
-        totalRow.insertCell(1).textContent = '';
-        totalRow.insertCell(2).textContent = roundDecimal(myCpuUsage, 2);
-        totalRow.insertCell(3).textContent = roundDecimal(myMemUsage / 10**9, 2);
-        totalRow.insertCell(4).textContent = '';
-
+        // Updates graphs at the end every time
         console.log("updated graphs");
         cpuGraph.update();
         memoryGraph.update();
