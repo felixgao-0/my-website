@@ -132,15 +132,17 @@ function updateGraphs() {
             if (warningPrompt.style.display === "none") {
                 warningPrompt.style.display = "block";
             }
-            pushShift(cpuDataset.global.globalUsage, null)
+
+            pushShift(cpuDataset.global.globalUsage, null);
             pushShift(cpuDataset.global.myUsage, null);
             pushShift(cpuDataset.perCore, null);
-            
-            pushShift(cpuGraph.data.datasets[0].data, null);
-            pushShift(cpuGraph.data.datasets[1].data, null);
 
-            pushShift(memoryGraph.data.datasets[0].data, null);
-            pushShift(memoryGraph.data.datasets[1].data, null);
+            cpuGraph.data.datasets.forEach((dataset) => {
+                pushShift(dataset, null);
+            });
+            memoryGraph.data.datasets.forEach((dataset) => {
+                pushShift(dataset, null);
+            });
 
             console.log("updated graphs without adding data");
             cpuGraph.update();
@@ -151,24 +153,32 @@ function updateGraphs() {
         if (warningPrompt.style.display === "block") {
             warningPrompt.style.display = "none";
         }
-        // CPU Data + add data to table
-        // These both use the same forEach loop so may as well combine
+        // My CPU and memory data + add data to table
+        // These all use the same forEach loop so may as well combine
         data.by_pid.forEach((process) => {
             myCpuUsage += process.cpu;
             myMemUsage += process.memory;
 
-            let newRow = table.insertRow(table.rows.length);
-            newRow.insertCell(0).textContent = process.pid;
-            newRow.insertCell(1).textContent = process.name;
-            newRow.insertCell(2).textContent = process.cpu;
-            newRow.insertCell(3).textContent = roundDecimal(process.memory / 10**9, 2);
-            newRow.insertCell(4).textContent = process.status;
+            // Credit: ChatGPT helped to make code more concise
+            const newRow = table.insertRow(table.rows.length);
+            const rowData = [
+                process.pid,
+                process.name,
+                process.cpu,
+                roundDecimal(process.memory / 10**9, 2),
+                process.status
+            ];
+
+            rowData.forEach((value, index) => {
+                newRow.insertCell(index).textContent = value;
+            });
         });
 
         // Add global data
-        console.log(cpuDataset.global.globalUsage)
-        console.log(data.total.cpu.usage)
-        pushShift(cpuDataset.global.globalUsage, data.total.cpu.usage)
+        //console.log(cpuDataset.global.globalUsage)
+        //console.log(data.total.cpu.usage)
+        cpuDataset.global.globalUsage.push(data.total.cpu.usage);
+        cpuDataset.global.globalUsage.shift();
         pushShift(cpuDataset.global.myUsage, roundDecimal(myCpuUsage, 2));
         // Add core usage & frequency
         pushShift(cpuDataset.perCore, data.total.cpu["per-core"]);
@@ -187,6 +197,7 @@ function updateGraphs() {
             }
 
         } else if (cpuDataset.dataSource === "core-usage") {
+            console.log(cpuDataset.perCore)
             cpuDataset.perCore.forEach((period) => {
                 let i = 0;
                 if (period === null) {
@@ -290,15 +301,20 @@ function selectButton(button, group) {
             cpuGraph.data.dataset = cpuData.datasets; // Set default
         } else if (button.name === "core-usage") {
             console.log("help idk what im coding");
+            console.log(cpuGraph.data);
+            cpuGraph.data.dataset = [];
             for (let i = 1; i <= cpuDataset.cores; i++) {
                 cpuGraph.data.dataset.push({
-                    label: `Core #${i}`,
+                    label: `Core #${i - 1}`,
                     data: Array(30).fill(null),
                     fill: true,
                     backgroundColor: 'rgba(54, 162, 235, 0.2)',
                     borderColor: 'rgba(54, 162, 235, 1)'
                 });
             }
+            console.log("afterwards of me not understanding anything")
+            console.log(cpuGraph.data)
+            cpuGraph.update();
         }
     } else if (group == "storage-options") {
         fetch("/data")
