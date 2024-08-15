@@ -29,6 +29,7 @@ let memoryDataset = {
         myUsage: Array(30).fill(null)
     },
     perProcess: [], // This will contain each process as a object
+    max: 0,
     dataSource: "global-usage",
     changeSource: false
 };
@@ -138,10 +139,10 @@ function updateGraphs() {
             pushShift(cpuDataset.perCore, null);
 
             cpuGraph.data.datasets.forEach((dataset) => {
-                pushShift(dataset, null);
+                pushShift(dataset.data, null);
             });
             memoryGraph.data.datasets.forEach((dataset) => {
-                pushShift(dataset, null);
+                pushShift(dataset.data, null);
             });
 
             console.log("updated graphs without adding data");
@@ -175,8 +176,6 @@ function updateGraphs() {
         });
 
         // Add global data
-        //console.log(cpuDataset.global.globalUsage)
-        //console.log(data.total.cpu.usage)
         cpuDataset.global.globalUsage.push(data.total.cpu.usage);
         cpuDataset.global.globalUsage.shift();
         pushShift(cpuDataset.global.myUsage, roundDecimal(myCpuUsage, 2));
@@ -197,17 +196,17 @@ function updateGraphs() {
             }
 
         } else if (cpuDataset.dataSource === "core-usage") {
-            console.log(cpuDataset.perCore)
-            cpuDataset.perCore.forEach((period) => {
+            cpuDataset.perCore.forEach((history) => {
                 let i = 0;
-                if (period === null) {
+                if (history === null) {
                     cpuGraph.data.datasets.forEach((dataset) => {
-                        dataset.data = null;
+                        pushShift(dataset.data, null); // TODO: Change that
                     });
                     return
                 }
-                period.forEach((coreFreq) => {
-                    cpuGraph.data.datasets[i].data = cpuDataset.coreFreq;
+                // So all the core frequencies for that timeperiod, in order
+                history.forEach((coreFreq) => {
+                    pushShift(cpuGraph.data.datasets[i].data, coreFreq);
                     i++;
                 })
             })
@@ -217,7 +216,10 @@ function updateGraphs() {
 
         // Memory Data
         pushShift(memoryGraph.data.datasets[0].data, roundDecimal(myMemUsage / 10**9, 2));
-        pushShift(memoryGraph.data.datasets[1].data, roundDecimal(data.total.memory.used / 10**9, 2));
+        if (memoryDataset.dataSource === "global-usage") { 
+            console.log(memoryGraph.data.datasets)
+            pushShift(memoryGraph.data.datasets[1].data, roundDecimal(data.total.memory.used / 10**9, 2));
+        }
 
         updateMemoryTxt(data);
 
@@ -289,33 +291,54 @@ function selectButton(button, group) {
     });
     button.classList.add('selected');
 
-    if (group == "memory-options") {
-        fetch("/data")
-        .then((response) => response.json())
-        .then((data) => {
-            return
-        });
-    } else if (group == "cpu-options") {
+    if (group == "cpu-options") {
         cpuDataset.dataSource = button.name;
         if (button.name === "global-usage") {
-            cpuGraph.data.dataset = cpuData.datasets; // Set default
+            cpuGraph.data.datasets = [{
+                label: 'My Usage',
+                data: Array(30).fill(null),
+                fill: true,
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)'
+            }, {
+                label: 'Global Usage',
+                data: Array(30).fill(null),
+                fill: true,
+                backgroundColor: 'rgba(201, 203, 207, 0.2)',
+                borderColor: 'rgba(201, 203, 207, 1)'
+            }]
         } else if (button.name === "core-usage") {
-            console.log("help idk what im coding");
-            console.log(cpuGraph.data);
-            cpuGraph.data.dataset = [];
+            cpuGraph.data.datasets = [];
             for (let i = 1; i <= cpuDataset.cores; i++) {
-                cpuGraph.data.dataset.push({
-                    label: `Core #${i - 1}`,
+                cpuGraph.data.datasets.push({
+                    label: `Core #${i}`,
                     data: Array(30).fill(null),
                     fill: true,
                     backgroundColor: 'rgba(54, 162, 235, 0.2)',
                     borderColor: 'rgba(54, 162, 235, 1)'
                 });
             }
-            console.log("afterwards of me not understanding anything")
-            console.log(cpuGraph.data)
-            cpuGraph.update();
         }
+        cpuGraph.update();
+        
+    } else if (group == "memory-options") {
+        memoryDataset.dataSource = button.name;
+        if (button.name === "global-usage") {
+            memoryGraph.data.datasets.push({
+                label: 'Global Usage',
+                data: Array(30).fill(null),
+                fill: true,
+                backgroundColor: 'rgba(201, 203, 207, 0.2)',
+                borderColor: 'rgba(201, 203, 207, 1)'
+            })
+            memoryGraph.options.scales.y.max = memoryDataset.max;
+        } else if (button.name === "my-usage") {
+            memoryGraph.data.datasets.pop() // Remove global value
+            memoryDataset.max = memoryGraph.options.scales.y.max;
+            memoryGraph.options.scales.y.max = 2;
+        }
+        memoryGraph.update();
+        
     } else if (group == "storage-options") {
         fetch("/data")
         .then((response) => response.json())
@@ -338,7 +361,6 @@ function selectButton(button, group) {
             });
 
             if (button.name == "global-usage") {
-                console.log("global usage lol")
                 storageGraph.data.labels = ["My Usage", "Storage Left", "Other Usage"];
                 storageGraph.data.datasets[0].data = [myStorageUsage / (1024 ** 3), data.total.storage.free / (1024 ** 3), (data.total.storage.used - myStorageUsage) / (1024 ** 3)];
                 storageGraph.data.datasets[0].backgroundColour = ['rgb(54, 162, 235)', 'rgb(211,211,211)', 'rgb(255, 99, 132)']
