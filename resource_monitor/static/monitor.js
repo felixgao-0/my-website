@@ -18,7 +18,7 @@ let cpuDataset = {
         myUsage: Array(30).fill(null)
     },
     perCore: Array(30).fill(null), // This will contain further arrays for each core
-    frequency: Array(30).fill(null),
+    cores: 0,
     dataSource: "global-usage",
     changeSource: false
 };
@@ -132,81 +132,78 @@ function updateGraphs() {
 
             pushShift(memoryGraph.data.datasets[0].data, null);
             pushShift(memoryGraph.data.datasets[1].data, null);
-        } else {
-            // CPU Data
-            data.by_pid.forEach((process) => {
-                myCpuUsage += process.cpu;
-                myMemUsage += process.memory;
 
-                let newRow = table.insertRow(table.rows.length);
-                newRow.insertCell(0).textContent = process.pid;
-                newRow.insertCell(1).textContent = process.name;
-                newRow.insertCell(2).textContent = process.cpu;
-                newRow.insertCell(3).textContent = roundDecimal(process.memory / 10**9, 2);
-                newRow.insertCell(4).textContent = process.status;
-            });
+            console.log("updated graphs without adding data");
+            cpuGraph.update();
+            memoryGraph.update();
+            return
+        }
+        // CPU Data + add data to table
+        // These both use the same forEach loop so may as well combine
+        data.by_pid.forEach((process) => {
+            myCpuUsage += process.cpu;
+            myMemUsage += process.memory;
 
-            // Add global data
-            pushShift(cpuDataset.global.globalUsage, data.total.cpu.usage)
-            pushShift(cpuDataset.global.myUsage, roundDecimal(myCpuUsage, 2));
-            // Add core usage & frequency
-            pushShift(cpuDataset.perCore, data.total.cpu["per-core"]);
-            pushShift(cpuDataset.frequency, roundDecimal(data.total.cpu["frequency"] / 1000, 2));
+            let newRow = table.insertRow(table.rows.length);
+            newRow.insertCell(0).textContent = process.pid;
+            newRow.insertCell(1).textContent = process.name;
+            newRow.insertCell(2).textContent = process.cpu;
+            newRow.insertCell(3).textContent = roundDecimal(process.memory / 10**9, 2);
+            newRow.insertCell(4).textContent = process.status;
+        });
 
-            // Add data to chart depending on chart type
-            if (cpuDataset.dataSource === "global-usage") {
-                /*
-                if (cpuDataset.changeSource === true) {
-                    // TODO: Clear pervious dataset on change
-                    cpuDataset.changeSource = false;
-                } */
-                cpuGraph.data.datasets[0].data = cpuDataset.global.myUsage;
-                cpuGraph.data.datasets[1].data = cpuDataset.global.globalUsage;
-
-                if (parseFloat(cpuDataset.global.myUsage.slice(-1)) >= parseFloat(cpuDataset.global.globalUsage.slice(-1))) {
-                    console.warn(`How on earch is my usage higher than global? Global is ${cpuDataset.global.globalUsage.slice(-1)}, mine is ${cpuDataset.global.myUsage.slice(-1)}`)
-                }
-
-            } else if (cpuDataset.dataSource === "core-usage") {
-                console.log(cpuDataset.perCore)
-                cpuDataset.perCore.forEach((period) => {
-                    let i = 0;
-                    if (period === null) {
-                        cpuGraph.data.datasets.forEach((dataset) => {
-                            dataset.data = null;
-                        });
-                        return
-                    }
-                    period.perCore.forEach((coreFreq) => {
-                        cpuGraph.data.datasets[i].data = cpuDataset.coreFreq;
-                        i++;
-                    })
-                })
-            } else if (cpuDataset.dataSource === "frequency") {
-                cpuGraph.data.datasets[0].data = cpuDataset.frequency;
-            }
-
-            updateCpuTxt(data)
-
-            // Memory Data
-            pushShift(memoryGraph.data.datasets[0].data, roundDecimal(myMemUsage / 10**9, 2));
-            pushShift(memoryGraph.data.datasets[1].data, roundDecimal(data.total.memory.used / 10**9, 2));
-
-            updateMemoryTxt(data);
-
-            // Storage Data
-
-            // Display in chart
-            let totalRow = table.insertRow(table.rows.length);
-            // Display a total
-            totalRow.insertCell(0).textContent = 'TOTAL:';
-            totalRow.insertCell(1).textContent = '';
-            totalRow.insertCell(2).textContent = roundDecimal(myCpuUsage, 2);
-            totalRow.insertCell(3).textContent = roundDecimal(myMemUsage / 10**9, 2);
-            totalRow.insertCell(4).textContent = '';
+        // Add global data
+        pushShift(cpuDataset.global.globalUsage, data.total.cpu.usage)
+        pushShift(cpuDataset.global.myUsage, roundDecimal(myCpuUsage, 2));
+        // Add core usage & frequency
+        pushShift(cpuDataset.perCore, data.total.cpu["per-core"]);
+        if (cpuDataset.cores === 0) {
+            cpuDataset.cores = parseInt(data.total.cpu["per-core"].length);
         }
 
-        // Updates graphs at the end every time
+        // Add data to chart depending on chart type
+        if (cpuDataset.dataSource === "global-usage") {
+            cpuGraph.data.datasets[0].data = cpuDataset.global.myUsage;
+            cpuGraph.data.datasets[1].data = cpuDataset.global.globalUsage;
+
+            // Debugging stuff
+            if (parseFloat(cpuDataset.global.myUsage.slice(-1)) >= parseFloat(cpuDataset.global.globalUsage.slice(-1))) {
+                    console.warn(`How on earch is my usage higher than global? Global is ${cpuDataset.global.globalUsage.slice(-1)}, mine is ${cpuDataset.global.myUsage.slice(-1)}`);
+            }
+
+        } else if (cpuDataset.dataSource === "core-usage") {
+            cpuDataset.perCore.forEach((period) => {
+                let i = 0;
+                if (period === null) {
+                    cpuGraph.data.datasets.forEach((dataset) => {
+                        dataset.data = null;
+                    });
+                    return
+                }
+                period.forEach((coreFreq) => {
+                    cpuGraph.data.datasets[i].data = cpuDataset.coreFreq;
+                    i++;
+                })
+            })
+        }
+
+        updateCpuTxt(data)
+
+        // Memory Data
+        pushShift(memoryGraph.data.datasets[0].data, roundDecimal(myMemUsage / 10**9, 2));
+        pushShift(memoryGraph.data.datasets[1].data, roundDecimal(data.total.memory.used / 10**9, 2));
+
+        updateMemoryTxt(data);
+
+        // Display a table total
+        let totalRow = table.insertRow(table.rows.length);
+        totalRow.insertCell(0).textContent = 'TOTAL:';
+        totalRow.insertCell(1).textContent = '';
+        totalRow.insertCell(2).textContent = roundDecimal(myCpuUsage, 2);
+        totalRow.insertCell(3).textContent = roundDecimal(myMemUsage / 10**9, 2);
+        totalRow.insertCell(4).textContent = '';
+
+        // Updates graphs at the end
         console.log("updated graphs");
         cpuGraph.update();
         memoryGraph.update();
@@ -218,8 +215,7 @@ function roundDecimal(number, roundTo) {
 }
 
 function pushShift(array, item) {
-    // A quick function to push and shift an array
-    // to maintain the chart size
+    // A quick function to push and shift an array to maintain the chart size
     array.push(item);
     array.shift();
 }
@@ -274,25 +270,21 @@ function selectButton(button, group) {
             return
         });
     } else if (group == "cpu-options") {
-        fetch("/data")
-        .then((response) => response.json())
-        .then((data) => {
-            cpuDataset.dataSource = button.name;
-            if (button.name === "global-usage") {
-                cpuGraph.data.dataset = cpuData.datasets; // Set default
-            } else if (button.name === "core-usage") {
-                console.log("help idk what im coding");
-                cpuGraph.data.dataset = [{
-                    label: 'My Usage',
+        cpuDataset.dataSource = button.name;
+        if (button.name === "global-usage") {
+            cpuGraph.data.dataset = cpuData.datasets; // Set default
+        } else if (button.name === "core-usage") {
+            console.log("help idk what im coding");
+            for (let i = 1; i <= cpuDataset.cores; i++) {
+                cpuGraph.data.dataset.push({
+                    label: `Core #${i}`,
                     data: Array(30).fill(null),
                     fill: true,
                     backgroundColor: 'rgba(54, 162, 235, 0.2)',
                     borderColor: 'rgba(54, 162, 235, 1)'
-                }];
-            } else if (button.name === "frequency") {
-                console.log("sos idk what to do frequency edition")
+                });
             }
-        });
+        }
     } else if (group == "storage-options") {
         fetch("/data")
         .then((response) => response.json())

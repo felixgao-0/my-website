@@ -65,12 +65,34 @@ def get_cmd_data():
 
 @app.route('/data')
 def data_pid():
-    stats: dict = {"by_pid": [], "total": {}, "by_dir": []}
     memory = psutil.virtual_memory()
     storage = psutil.disk_usage('/')
-
-    total_cpu: float = 0
-    total_mem: float = 0
+    
+    stats: dict = {
+        "by_pid": [], 
+        "total": {
+            "cpu": {
+                "usage": psutil.cpu_percent(interval=0.1),
+                "frequency": psutil.cpu_freq().current,
+                "per-core": psutil.cpu_percent(interval=0.1, percpu=True)
+            },
+            "memory": {
+                "total": memory.total,
+                "used": memory.used,
+                #"free": memory.available,
+                "percent": memory.percent
+            },
+            "storage": {
+                "total": storage.total,
+                "used": storage.used,
+                "free": storage.free,
+                "percent": storage.percent
+            }
+        },
+        "by_dir": get_storage(),
+        "total_cpu": 0,
+        "total_mem": 0
+    }
 
     for process in psutil.process_iter():
         stats["by_pid"].append({
@@ -81,31 +103,9 @@ def data_pid():
             "shared": process.memory_full_info().shared,
             "status": f"{process.status()} ({status_emojis.get(process.status())})"
         })
-        total_cpu += process.cpu_percent()
-        total_mem += process.memory_info().rss
+        stats["total_cpu"] += process.cpu_percent()
+        stats["total_mem"] += process.memory_info().rss
 
-    stats["by_dir"] = get_storage()
-
-    stats["total"]["cpu"] = {
-        "usage": psutil.cpu_percent(interval=0.1),
-        "frequency": psutil.cpu_freq().current,
-        "per-core": psutil.cpu_percent(interval=0.1, percpu=True)
-    }
-    stats["total"]["memory"] = {
-        "total": memory.total,
-        "used": memory.used,
-        #"free": memory.available,
-        "percent": memory.percent
-    }
-    stats["total"]["storage"] = {
-        "total": storage.total,
-        "used": storage.used,
-        "free": storage.free,
-        "percent": storage.percent
-    }
-    stats["total_cpu"] = total_cpu
-    stats["total_mem"] = total_mem
-    
     return stats
 
 app.run(host='0.0.0.0', port=8080, debug=True)
