@@ -25,7 +25,7 @@ status_emojis = {
 
 def get_storage():
     result = subprocess.run(
-        ["du", "--max-depth=1", "-c", os.getcwd()],
+        ["du", "--max-depth=1", , "--apparent-size", "-c", os.getcwd()],
         capture_output=True, 
         text=True
     )
