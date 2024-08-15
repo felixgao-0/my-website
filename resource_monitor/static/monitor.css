@@ -1,3 +1,13 @@
+#warning-prompt {
+    position: sticky;
+    top: 10px;
+    border: 3px solid #f6464d;
+    color: white;
+    border-radius: 8px;
+    padding: 0.01em 16px;
+    background: #f6464d;
+}
+
 .line-graph {
     margin-left: 1rem;
     margin-right: 1rem;

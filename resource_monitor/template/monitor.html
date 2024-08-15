@@ -19,6 +19,10 @@
 <body>
     <h1>Resource & Vital Monitor</h1>
 
+    <div id="warning-prompt" style="display: none;">
+        <p><b>Woah There!</b> The server isn't responding, data went bye bye D:</p>
+    </div>
+
     <div>
         <h2>CPU Usage</h2>
         <div class="container">
@@ -42,7 +46,7 @@
 
             <div class="graph-selector" data-group="memory-options">
                 <button class="toggle-button selected" onclick="selectButton(this, 'memory-options')" name="global-usage">Global Usage</button>
-                <button class="toggle-button" onclick="selectButton(this, 'memory-options')" name="process-usage">Process Usage</button>
+                <button class="toggle-button" onclick="selectButton(this, 'memory-options')" name="my-usage">My Usage</button>
             </div>
         </div>
 

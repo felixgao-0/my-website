@@ -112,6 +112,7 @@ function updateGraphs() {
     })
     .then((data) => {
         const table = document.getElementById("pid-chart");
+        const warningPrompt = document.getElementById("warning-prompt");
 
         let myCpuUsage = 0;
         let myMemUsage = 0;
@@ -127,6 +128,14 @@ function updateGraphs() {
         }
 
         if (data === null) { // Print nothing when data missing for whatever reason
+            // Show warning if its not displayed already
+            if (warningPrompt.style.display === "none") {
+                warningPrompt.style.display = "block";
+            }
+            pushShift(cpuDataset.global.globalUsage, null)
+            pushShift(cpuDataset.global.myUsage, null);
+            pushShift(cpuDataset.perCore, null);
+            
             pushShift(cpuGraph.data.datasets[0].data, null);
             pushShift(cpuGraph.data.datasets[1].data, null);
 
@@ -137,6 +146,10 @@ function updateGraphs() {
             cpuGraph.update();
             memoryGraph.update();
             return
+        }
+        // Hide warning prompt if it was displayed
+        if (warningPrompt.style.display === "block") {
+            warningPrompt.style.display = "none";
         }
         // CPU Data + add data to table
         // These both use the same forEach loop so may as well combine
@@ -153,6 +166,8 @@ function updateGraphs() {
         });
 
         // Add global data
+        console.log(cpuDataset.global.globalUsage)
+        console.log(data.total.cpu.usage)
         pushShift(cpuDataset.global.globalUsage, data.total.cpu.usage)
         pushShift(cpuDataset.global.myUsage, roundDecimal(myCpuUsage, 2));
         // Add core usage & frequency
