@@ -1,5 +1,6 @@
 // Global variables (All null until dom loads to set them)
 //    Charts:
+// ignore (?<!\/)\/(?!\/)(?!\/\*)(?!\*\/)
 let cpuGraph = null;
 let memoryGraph = null;
 let storageGraph = null;
@@ -25,10 +26,8 @@ let cpuDataset = {
 
 let memoryDataset = {
     global: {
-        globalUsage: Array(30).fill(null),
-        myUsage: Array(30).fill(null)
+        globalUsage: Array(30).fill(null)
     },
-    perProcess: [], // This will contain each process as a object
     max: 0,
     dataSource: "global-usage",
     changeSource: false
@@ -166,7 +165,7 @@ function updateGraphs() {
                 process.pid,
                 process.name,
                 process.cpu,
-                roundDecimal(process.memory / 10**9, 2),
+                convert(process.memory, "GB", 2),
                 process.status
             ];
 
@@ -176,10 +175,9 @@ function updateGraphs() {
         });
 
         // Add global data
-        cpuDataset.global.globalUsage.push(data.total.cpu.usage);
-        cpuDataset.global.globalUsage.shift();
+        pushShift(cpuDataset.global.globalUsage, data.total.cpu.usage);
         pushShift(cpuDataset.global.myUsage, roundDecimal(myCpuUsage, 2));
-        // Add core usage & frequency
+        // Add core usage + core count
         pushShift(cpuDataset.perCore, data.total.cpu["per-core"]);
         if (cpuDataset.cores === 0) {
             cpuDataset.cores = parseInt(data.total.cpu["per-core"].length);
@@ -190,10 +188,11 @@ function updateGraphs() {
             cpuGraph.data.datasets[0].data = cpuDataset.global.myUsage;
             cpuGraph.data.datasets[1].data = cpuDataset.global.globalUsage;
 
-            // Debugging stuff
+            // Debugging stuff, TODO Trace weird bug
+            /*
             if (parseFloat(cpuDataset.global.myUsage.slice(-1)) >= parseFloat(cpuDataset.global.globalUsage.slice(-1))) {
                     console.warn(`How on earch is my usage higher than global? Global is ${cpuDataset.global.globalUsage.slice(-1)}, mine is ${cpuDataset.global.myUsage.slice(-1)}`);
-            }
+            } */
 
         } else if (cpuDataset.dataSource === "core-usage") {
             cpuDataset.perCore.forEach((history) => {
@@ -204,7 +203,7 @@ function updateGraphs() {
                     });
                     return
                 }
-                // So all the core frequencies for that timeperiod, in order
+                // So all the core frequencies for that time period, in order
                 history.forEach((coreFreq) => {
                     pushShift(cpuGraph.data.datasets[i].data, coreFreq);
                     i++;
@@ -214,11 +213,14 @@ function updateGraphs() {
 
         updateCpuTxt(data)
 
+        // Save memory data
+        pushShift(memoryDataset.global.globalUsage, convert(data.total.memory.used, "GB", 2));
+
         // Memory Data
-        pushShift(memoryGraph.data.datasets[0].data, roundDecimal(myMemUsage / 10**9, 2));
+        pushShift(memoryGraph.data.datasets[0].data, convert(myMemUsage, "GB", 2));
         if (memoryDataset.dataSource === "global-usage") { 
             console.log(memoryGraph.data.datasets)
-            pushShift(memoryGraph.data.datasets[1].data, roundDecimal(data.total.memory.used / 10**9, 2));
+            memoryGraph.data.datasets[1].data = memoryDataset.global.globalUsage;
         }
 
         updateMemoryTxt(data);
@@ -228,7 +230,7 @@ function updateGraphs() {
         totalRow.insertCell(0).textContent = 'TOTAL:';
         totalRow.insertCell(1).textContent = '';
         totalRow.insertCell(2).textContent = roundDecimal(myCpuUsage, 2);
-        totalRow.insertCell(3).textContent = roundDecimal(myMemUsage / 10**9, 2);
+        totalRow.insertCell(3).textContent = convert(myMemUsage, "GB", 2),
         totalRow.insertCell(4).textContent = '';
 
         // Updates graphs at the end
@@ -240,6 +242,30 @@ function updateGraphs() {
 
 function roundDecimal(number, roundTo) {
     return parseFloat((number).toFixed(roundTo))
+}
+
+function convert(byte_value, unit, round) {
+    if (typeof round !== "number" && round !== undefined) {
+        throw new Error(`${round} is not a valid number to round to!`)
+    }
+    unit = unit.toUpperCase()
+    result = null;
+    if (unit === "KB") {
+        result = byte_value / (2**10)
+    } else if (unit === "MB") {
+        result = byte_value / (2**20)
+    } else if (unit === "GB") {
+        result = byte_value / (2 ** 30)
+    } else if (unit === "TB") {
+        result = byte_value / (2 ** 40)
+    } else {
+        throw new Error(`${unit} is not a valid unit!`);
+    }
+    if (round) {
+        return roundDecimal(result, round)
+    } else {
+        return result
+    }
 }
 
 function pushShift(array, item) {
@@ -255,24 +281,29 @@ function updateCpuTxt(data) {
         myCpuUsage += process.cpu;
     });
 
-    if (cpuStats.matches(':hover')) {
+    if (cpuDataset.dataSource === "global-usage") {
         cpuStats.textContent = `Global Usage: ${data.total.cpu.usage}%`;
-    } else {
+    } else if (cpuDataset.dataSource === "core-usage") {
         cpuStats.textContent = roundDecimal(myCpuUsage, 2) + "%";
     }
 }
 
 function updateMemoryTxt(data) {
-    if (memoryStats.matches(':hover')) {
-        memoryStats.textContent = `${roundDecimal(data.total.memory.used / 10**9, 2)} GB / ${roundDecimal(data.total.memory.total / 10**9, 2)} GB`;
-    } else {
-        memoryStats.textContent = data.total.memory.percent + "%";
+    if (cpuDataset.dataSource === "global-usage") {
+        if (memoryStats.matches(':hover')) {
+            memoryStats.textContent = `${convert(data.total.memory.used, "GB", 2)} GB / ${convert(data.total.memory.total, "GB", 2)} GB`;
+        } else {
+            memoryStats.textContent = data.total.memory.percent + "%";
+        }
+    } else if (cpuDataset.dataSource === "my-usage") {
+        // TODO
+        console.log("uhhh")
     }
 }
 
 function updateStorageTxt(data) {
     if (storageStats.matches(':hover')) {
-        storageStats.textContent = `${roundDecimal(data.total.storage.used / 10**9, 2)} GB / ${roundDecimal(data.total.storage.total / 10**9, 2)} GB`
+        storageStats.textContent = `${convert(data.total.storage.used, "GB", 2)} GB / ${convert(data.total.storage.total, "GB", 2)} GB`
     } else {
         storageStats.textContent = data.total.storage.percent + "%";
     }
@@ -338,7 +369,7 @@ function selectButton(button, group) {
             memoryGraph.options.scales.y.max = 2;
         }
         memoryGraph.update();
-        
+
     } else if (group == "storage-options") {
         fetch("/data")
         .then((response) => response.json())
@@ -363,11 +394,16 @@ function selectButton(button, group) {
             if (button.name == "global-usage") {
                 storageGraph.data.labels = ["My Usage", "Storage Left", "Other Usage"];
                 storageGraph.data.datasets[0].data = [myStorageUsage / (1024 ** 3), data.total.storage.free / (1024 ** 3), (data.total.storage.used - myStorageUsage) / (1024 ** 3)];
-                storageGraph.data.datasets[0].backgroundColour = ['rgb(54, 162, 235)', 'rgb(211,211,211)', 'rgb(255, 99, 132)']
+                storageGraph.data.datasets[0].backgroundColor = ['rgb(54, 162, 235)', 'rgb(211,211,211)', 'rgb(255, 99, 132)']
+            } else if (button.name == "my-usage") {
+                storageGraph.data.labels = chart_labels.push("total");
+                    storageGraph.data.datasets[0].data = chart_data.push(myStorageUsage / 100**9);
+                    storageGraph.data.datasets[0].backgroundColor = [
+                        'rgb(255, 99, 132)', 'rgb(54, 162, 235)', 'rgb(255, 203, 92)', 'rgb(255, 163, 26)', 'rgb(92, 185, 94)', 'rgb(165, 56, 182)']
             } else if (button.name == "directory-usage") {
                 storageGraph.data.labels = chart_labels;
                 storageGraph.data.datasets[0].data = chart_data;
-                storageGraph.data.datasets[0].backgroundColour = [
+                storageGraph.data.datasets[0].backgroundColor = [
                     'rgb(255, 99, 132)', 'rgb(54, 162, 235)', 'rgb(255, 203, 92)', 'rgb(255, 163, 26)', 'rgb(92, 185, 94)', 'rgb(165, 56, 182)']
             }
 
@@ -417,13 +453,10 @@ const storageData = {
         data: [],
         fill: true,
         backgroundColor: [
-            'rgb(255, 99, 132)',
-            'rgb(54, 162, 235)',
-            'rgb(255, 203, 92)',
-            'rgb(255, 163, 26)',
-            'rgb(92, 185, 94)',
-            'rgb(165, 56, 182)'
-            ],
+            'rgb(54, 162, 235)', 
+            'rgb(211,211,211)', 
+            'rgb(255, 99, 132)'
+        ],
         hoverOffset: 15,
         borderColor: 'rgba(54, 162, 235, 1)'
     }]
@@ -462,7 +495,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
         memoryGraph = new Chart("memory-graph", {
             type: 'line',
             data: memoryData,
-            options: getOptionData(2, true, roundDecimal(data.total.memory.total / 10**9, 2), " GB") // Round and convert to gb
+            options: getOptionData(2, true, convert(data.total.memory.total, "GB", 2)
         });
 
         memoryStats.addEventListener("mouseover", (event) => updateMemoryTxt(data));
