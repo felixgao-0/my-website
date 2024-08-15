@@ -1,7 +1,5 @@
 import subprocess
-import threading
 import os
-import time
 
 from flask import Flask
 import flask
@@ -79,7 +77,8 @@ def data_pid():
             "pid": process.pid,
             "name": process.name(),
             "cpu": process.cpu_percent(interval=0.1),
-            "memory": process.memory_info().rss,
+            "memory": process.memory_full_info().uss,
+            "shared": process.memory_full_info().shared,
             "status": f"{process.status()} ({status_emojis.get(process.status())})"
         })
         total_cpu += process.cpu_percent()

@@ -117,6 +117,9 @@ function updateGraphs() {
         let myMemUsage = 0;
 
         // Clear rows on table before adding data
+
+        // CREDIT: Thanks stackoverflow
+        // https://stackoverflow.com/questions/16270087/delete-all-rows-on-a-table-except-first-with-javascript
         var rows = table.rows;
         var i = rows.length;
         while (--i) {
@@ -163,26 +166,23 @@ function updateGraphs() {
                 if (parseFloat(cpuDataset.global.myUsage.slice(-1)) >= parseFloat(cpuDataset.global.globalUsage.slice(-1))) {
                     console.warn(`How on earch is my usage higher than global? Global is ${cpuDataset.global.globalUsage.slice(-1)}, mine is ${cpuDataset.global.myUsage.slice(-1)}`)
                 }
-                
+
             } else if (cpuDataset.dataSource === "core-usage") {
-                /*
-                if (cpuDataset.changeSource === true) {
-                    // TODO: Clear pervious dataset on change
-                    cpuDataset.changeSource = false;
-                } */
+                console.log(cpuDataset.perCore)
                 cpuDataset.perCore.forEach((period) => {
                     let i = 0;
+                    if (period === null) {
+                        cpuGraph.data.datasets.forEach((dataset) => {
+                            dataset.data = null;
+                        });
+                        return
+                    }
                     period.perCore.forEach((coreFreq) => {
                         cpuGraph.data.datasets[i].data = cpuDataset.coreFreq;
                         i++;
                     })
                 })
             } else if (cpuDataset.dataSource === "frequency") {
-                /*
-                if (cpuDataset.changeSource === true) {
-                    // TODO: Clear pervious dataset on change
-                    cpuDataset.changeSource = false;
-                } */
                 cpuGraph.data.datasets[0].data = cpuDataset.frequency;
             }
 
@@ -195,12 +195,9 @@ function updateGraphs() {
             updateMemoryTxt(data);
 
             // Storage Data
-            
-            // Display in chart
-            // CREDIT: Thanks stackoverflow
-            // https://stackoverflow.com/questions/16270087/delete-all-rows-on-a-table-except-first-with-javascript
-            let totalRow = table.insertRow(table.rows.length);
 
+            // Display in chart
+            let totalRow = table.insertRow(table.rows.length);
             // Display a total
             totalRow.insertCell(0).textContent = 'TOTAL:';
             totalRow.insertCell(1).textContent = '';
@@ -281,8 +278,20 @@ function selectButton(button, group) {
         .then((response) => response.json())
         .then((data) => {
             cpuDataset.dataSource = button.name;
-            console.log(`Hi! ${button.name}`)
-            console.log(cpuDataset)
+            if (button.name === "global-usage") {
+                cpuGraph.data.dataset = cpuData.datasets; // Set default
+            } else if (button.name === "core-usage") {
+                console.log("help idk what im coding");
+                cpuGraph.data.dataset = [{
+                    label: 'My Usage',
+                    data: Array(30).fill(null),
+                    fill: true,
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)'
+                }];
+            } else if (button.name === "frequency") {
+                console.log("sos idk what to do frequency edition")
+            }
         });
     } else if (group == "storage-options") {
         fetch("/data")
