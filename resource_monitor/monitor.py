@@ -8,15 +8,15 @@ import psutil
 from flask import Flask
 import flask
 
-from flask_socketio import SocketIO
+#from flask_socketio import SocketIO
 
 app = Flask(
     'app', 
     template_folder="resource_monitor/template/",
     static_folder='resource_monitor/static'
 )
-app.config['SECRET_KEY'] = os.environ["SECRET_KEY"]
-socketio = SocketIO(app)
+#app.config['SECRET_KEY'] = os.environ["SECRET_KEY"]
+#socketio = SocketIO(app)
 
 # Add emojis cause they look nice
 status_emojis = {
@@ -29,7 +29,7 @@ status_emojis = {
 
 def get_storage():
     result = subprocess.run(
-        ["du", "--max-depth=1", "-c", os.getcwd()],
+        ["du", "--max-depth=1", "-c", "-b", os.getcwd()],
         capture_output=True, 
         text=True
     )
@@ -45,15 +45,15 @@ def get_storage():
 def index():
     return flask.render_template("monitor.html")
 
-
+"""
 @app.route("/run_commands")
 def get_cmd_data():
-    """ Nest cli not in replit so commented out ):
-    nest_cli = subprocess.run(
-        ["nest", "resources"],
-        capture_output=True, 
-        text=True
-    )"""
+    # Nest cli not in replit so commented out ):
+    #nest_cli = subprocess.run(
+    #    ["nest", "resources"],
+    #    capture_output=True, 
+    #    text=True
+    #)
 
     sys_vitals = subprocess.run(
         ["top" , "-n1" , "-b"],
@@ -65,7 +65,7 @@ def get_cmd_data():
         "top": sys_vitals.stdout,
         "nest": 'Disk usage: 0.0 GB used out of 15.0 GB limit\nMemory usage: 0.05 GB used out of 2.0 GB limit\n' # Sample response from the nest cli cause this is replit
     }
-
+"""
 
 @app.route('/data')
 def data_pid():

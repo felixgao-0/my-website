@@ -386,15 +386,15 @@ function selectButton(button, group) {
                 }
 
                 chart_labels.push(directory[1]);
-                chart_data.push(directory[0] / 10**6);
+                chart_data.push(convert(directory[0], "GB", 5)); // Numbers small
             });
 
             if (button.name == "global-usage") {
                 storageGraph.data.labels = ["My Usage", "Storage Left", "Other Usage"];
                 storageGraph.data.datasets[0].data = [
-                    myStorageUsage / (1024 ** 3), 
-                    data.total.storage.free / (1024 ** 3), 
-                    (data.total.storage.used - myStorageUsage) / (1024 ** 3)
+                    convert(myStorageUsage, "GB", 3),
+                    convert(data.total.storage.free, "GB", 3),
+                    convert(data.total.storage.used - myStorageUsage, "GB", 3)
                 ];
                 storageGraph.data.datasets[0].backgroundColor = [
                     'rgb(54, 162, 235)', 
@@ -404,12 +404,12 @@ function selectButton(button, group) {
 
             } else if (button.name == "my-usage") {
                 console.log(storageGraph.data)
-                chart_labels.push("total");
-                chart_data.push(convert(myStorageUsage, "GB"));
+                storageGraph.data.datasets[0].backgroundColor = [
+                    'rgb(255, 99, 132)', 'rgb(54, 162, 235)', 'rgb(255, 203, 92)', 'rgb(255, 163, 26)', 'rgb(92, 185, 94)', 'rgb(165, 56, 182)']
+                chart_labels.push("Space Left");
+                chart_data.push(2 - convert(myStorageUsage, "GB"));
                 storageGraph.data.labels = chart_labels;
                 storageGraph.data.datasets[0].data = chart_data;
-                storageGraph.data.datasets[0].backgroundColor = [
-                        'rgb(255, 99, 132)', 'rgb(54, 162, 235)', 'rgb(255, 203, 92)', 'rgb(255, 163, 26)', 'rgb(92, 185, 94)', 'rgb(165, 56, 182)']
 
             } else if (button.name == "directory-usage") {
                 storageGraph.data.labels = chart_labels;
@@ -482,11 +482,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
     cpuStats = document.getElementById("cpu-usage");
     memoryStats = document.getElementById("memory-usage");
     storageStats = document.getElementById("storage-usage");
-
-    var socket = io();
-    socket.on('connect', function() {
-        console.warn("hi")
-    });
 
     // Get data
     fetch("/data")
