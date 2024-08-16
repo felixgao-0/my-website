@@ -8,6 +8,11 @@
     background: #f6464d;
 }
 
+#bottom-bar {
+    display: flex;
+    align-items: center;
+}
+
 .line-graph {
     margin-left: 1rem;
     margin-right: 1rem;

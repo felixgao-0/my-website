@@ -1,16 +1,20 @@
 import subprocess
 import os
 
+import psutil
+
 from flask import Flask
 import flask
 
-import psutil
+from flask_socketio import SocketIO
 
 app = Flask(
     'app', 
     template_folder="resource_monitor/template/",
     static_folder='resource_monitor/static'
 )
+app.config['SECRET_KEY'] = os.environ["SECRET_KEY"]
+socketio = SocketIO(app)
 
 print(f"Current directory: {os.getcwd()}")
 
@@ -25,7 +29,7 @@ status_emojis = {
 
 def get_storage():
     result = subprocess.run(
-        ["du", "--max-depth=1", "--apparent-size", "-c", os.getcwd()],
+        ["du", "--max-depth=1", "-c", os.getcwd()],
         capture_output=True, 
         text=True
     )

@@ -36,7 +36,9 @@
             </div>
         </div>
 
-        <canvas id="cpu-graph" class="line-graph"></canvas>
+        <div style="position: relative; height:80vh; width:100vw;">
+            <canvas id="cpu-graph" class="line-graph"></canvas>
+        </div>
     </div>
 
     <div>
@@ -50,7 +52,9 @@
             </div>
         </div>
 
-        <canvas id="memory-graph" class="line-graph"></canvas>
+        <div style="position: relative; height:80vh; width:100vw;">
+            <canvas id="memory-graph" class="line-graph"></canvas>
+        </div>
     </div>
 
     <div>
@@ -65,25 +69,29 @@
             </div>
         </div>
 
-        <canvas id="storage-graph"></canvas>
-    </div>
+        <div class="container">
+            <div style="aspect-ratio: 1/1; width:33vw">
+                <canvas id="storage-graph"></canvas>
+            </div>
 
-    <div>
-        <h2>Usages by PID</h2>
-        <table class="pid-data" id="pid-chart">
-            <tr>
-                <th style="width:10%;">PID</th>
-                <th style="width:50%;">Process Name</th>
-                <th style="width:10%;">CPU (%)</th>
-                <th style="width:10%;">Memory (GB)</th>
-                <th style="width:20%;">Status</th>
-            </tr>
-        </table>
-    </div>
+            <div>
+                <h2>Usages by PID</h2>
+                <table class="pid-data" id="pid-chart">
+                    <tr>
+                        <th style="width:10%;">PID</th>
+                        <th style="width:50%;">Process Name</th>
+                        <th style="width:10%;">CPU (%)</th>
+                        <th style="width:10%;">Memory (GB)</th>
+                        <th style="width:20%;">Status</th>
+                    </tr>
+                </table>
+            </div>
 
-    <div>
-        <p>[stuff goes here]</p>
-        <button onclick="">Reload</button>
+            <div>
+                <p>[stuff goes here]</p>
+                <button onclick="">Reload</button>
+            </div>
+        </div>
     </div>
 </body>
 </html>

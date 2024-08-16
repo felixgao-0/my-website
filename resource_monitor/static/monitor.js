@@ -66,7 +66,8 @@ function getOptionData(limit, addScale, scaleMax = 100, unit = "%") {
             point: {
                 radius: 0 // default to disabled in all datasets
             }
-        }
+        },
+        maintainAspectRatio: false,
     }
     if (addScale) {
         options.scales = {
@@ -219,7 +220,6 @@ function updateGraphs() {
         // Memory Data
         pushShift(memoryGraph.data.datasets[0].data, convert(myMemUsage, "GB", 2));
         if (memoryDataset.dataSource === "global-usage") { 
-            console.log(memoryGraph.data.datasets)
             memoryGraph.data.datasets[1].data = memoryDataset.global.globalUsage;
         }
 
@@ -385,21 +385,32 @@ function selectButton(button, group) {
                     return
                 }
 
-                else if (button.name == "directory-usage") {
-                    chart_labels.push(directory[1]);
-                    chart_data.push(directory[0] / 10**6);
-                }
+                chart_labels.push(directory[1]);
+                chart_data.push(directory[0] / 10**6);
             });
 
             if (button.name == "global-usage") {
                 storageGraph.data.labels = ["My Usage", "Storage Left", "Other Usage"];
-                storageGraph.data.datasets[0].data = [myStorageUsage / (1024 ** 3), data.total.storage.free / (1024 ** 3), (data.total.storage.used - myStorageUsage) / (1024 ** 3)];
-                storageGraph.data.datasets[0].backgroundColor = ['rgb(54, 162, 235)', 'rgb(211,211,211)', 'rgb(255, 99, 132)']
+                storageGraph.data.datasets[0].data = [
+                    myStorageUsage / (1024 ** 3), 
+                    data.total.storage.free / (1024 ** 3), 
+                    (data.total.storage.used - myStorageUsage) / (1024 ** 3)
+                ];
+                storageGraph.data.datasets[0].backgroundColor = [
+                    'rgb(54, 162, 235)', 
+                    'rgb(211,211,211)', 
+                    'rgb(255, 99, 132)'
+                ]
+
             } else if (button.name == "my-usage") {
-                storageGraph.data.labels = chart_labels.push("total");
-                    storageGraph.data.datasets[0].data = chart_data.push(myStorageUsage / 100**9);
-                    storageGraph.data.datasets[0].backgroundColor = [
+                console.log(storageGraph.data)
+                chart_labels.push("total");
+                chart_data.push(convert(myStorageUsage, "GB"));
+                storageGraph.data.labels = chart_labels;
+                storageGraph.data.datasets[0].data = chart_data;
+                storageGraph.data.datasets[0].backgroundColor = [
                         'rgb(255, 99, 132)', 'rgb(54, 162, 235)', 'rgb(255, 203, 92)', 'rgb(255, 163, 26)', 'rgb(92, 185, 94)', 'rgb(165, 56, 182)']
+
             } else if (button.name == "directory-usage") {
                 storageGraph.data.labels = chart_labels;
                 storageGraph.data.datasets[0].data = chart_data;
@@ -495,7 +506,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
         memoryGraph = new Chart("memory-graph", {
             type: 'line',
             data: memoryData,
-            options: getOptionData(2, true, convert(data.total.memory.total, "GB", 2)
+            options: getOptionData(2, true, convert(data.total.memory.total, "GB", 2))
         });
 
         memoryStats.addEventListener("mouseover", (event) => updateMemoryTxt(data));
