@@ -67,7 +67,7 @@ function getOptionData(limit, addScale, scaleMax = 100, unit = "%") {
                 radius: 0 // default to disabled in all datasets
             }
         },
-        maintainAspectRatio: false,
+        maintainAspectRatio: false
     }
     if (addScale) {
         options.scales = {
@@ -483,6 +483,11 @@ document.addEventListener("DOMContentLoaded", (event) => {
     memoryStats = document.getElementById("memory-usage");
     storageStats = document.getElementById("storage-usage");
 
+    var socket = io();
+    socket.on('connect', function() {
+        console.warn("hi")
+    });
+
     // Get data
     fetch("/data")
     .then((response) => response.json())
@@ -506,7 +511,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
         memoryGraph = new Chart("memory-graph", {
             type: 'line',
             data: memoryData,
-            options: getOptionData(2, true, convert(data.total.memory.total, "GB", 2))
+            options: getOptionData(2, true, convert(data.total.memory.total, "GB", 2), " GB")
         });
 
         memoryStats.addEventListener("mouseover", (event) => updateMemoryTxt(data));

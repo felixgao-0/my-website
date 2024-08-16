@@ -1,5 +1,7 @@
 import subprocess
 import os
+import sched
+import time
 
 import psutil
 
@@ -15,8 +17,6 @@ app = Flask(
 )
 app.config['SECRET_KEY'] = os.environ["SECRET_KEY"]
 socketio = SocketIO(app)
-
-print(f"Current directory: {os.getcwd()}")
 
 # Add emojis cause they look nice
 status_emojis = {
@@ -111,5 +111,6 @@ def data_pid():
         stats["total_mem"] += process.memory_info().rss
 
     return stats
+
 
 app.run(host='0.0.0.0', port=8080, debug=True)

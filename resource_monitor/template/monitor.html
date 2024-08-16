@@ -6,6 +6,8 @@
     
     <title>Resource Monitor & Vitals</title>
 
+    <!-- Websocket connection for data -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.0"></script>
     <script src="{{ url_for('static', filename='monitor.js') }}"></script>
@@ -31,12 +33,10 @@
             <div class="graph-selector" data-group="cpu-options">
                 <button class="toggle-button selected" onclick="selectButton(this, 'cpu-options')" name="global-usage">Global Usage</button>
                 <button class="toggle-button" onclick="selectButton(this, 'cpu-options')" name="core-usage">Per-Core Usage</button>
-                <!-- Used button
-                <button class="toggle-button" onclick="selectButton(this, 'cpu-options')" name="idk">CPU Frequency</button>-->
             </div>
         </div>
 
-        <div style="position: relative; height:80vh; width:100vw;">
+        <div style="position: relative; height:80vh; width:100%">
             <canvas id="cpu-graph" class="line-graph"></canvas>
         </div>
     </div>
@@ -52,7 +52,7 @@
             </div>
         </div>
 
-        <div style="position: relative; height:80vh; width:100vw;">
+        <div style="position: relative; height:80vh; width:100%;">
             <canvas id="memory-graph" class="line-graph"></canvas>
         </div>
     </div>
@@ -70,7 +70,7 @@
         </div>
 
         <div class="container">
-            <div style="aspect-ratio: 1/1; width:33vw">
+            <div style="aspect-ratio: 1/1.5; width:33vw">
                 <canvas id="storage-graph"></canvas>
             </div>
 
