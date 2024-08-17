@@ -1,0 +1,22 @@
+name: Push changes to Nest
+run-name: Push changes to Nest :D
+on: [push]
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+    - name: SSH Remote Commands
+      uses: appleboy/ssh-action@v0.1.10
+      with:
+        host: hackclub.app
+        username: felixgao
+
+        key: # optional
+        # path of ssh private key
+        key_path: # optional
+        # sha256 fingerprint of the host public key
+    
+        script: # optional
+          
