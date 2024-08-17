@@ -1,7 +1,9 @@
+"""
+Nest Resouce Monitor - Backend: This runs a flask server to run the site's backend with psutil
+"""
+
 import subprocess
 import os
-import sched
-import time
 
 import psutil
 
@@ -30,8 +32,9 @@ status_emojis = {
 def get_storage():
     result = subprocess.run(
         ["du", "--max-depth=1", "-c", "-b", os.getcwd()],
-        capture_output=True, 
-        text=True
+        capture_output=True,
+        text=True,
+        check=True
     )
     new_result = []
     for file_path in result.stdout.splitlines():
@@ -71,7 +74,7 @@ def get_cmd_data():
 def data_pid():
     memory = psutil.virtual_memory()
     storage = psutil.disk_usage('/')
-    
+
     stats: dict = {
         "by_pid": [], 
         "total": {
