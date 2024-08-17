@@ -21,7 +21,7 @@ jobs:
         pip install -r requirements.txt
     - name: Analysing the code with pylint
       run: |
-        pylint_output=pylint $(git ls-files '*.py')
+        pylint_output=$(pylint $(git ls-files '*.py'))
         echo "$pylint_output"
         if echo "$pylint_output" | grep -q "^[FC]"; then
           echo "Fatal errors detected. Failing the build."
