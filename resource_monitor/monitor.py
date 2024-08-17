@@ -116,4 +116,4 @@ def data_pid():
     return stats
 
 
-app.run(host='0.0.0.0', port=8080, debug=True)
+app.run(host='localhost', port=57583, debug=False)

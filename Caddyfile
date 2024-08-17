@@ -1,0 +1,18 @@
+{
+	admin off
+}
+http://felixgao.hackclub.app, http://felixgao.dev {
+	bind unix/.webserver.sock|777
+	bind unix/.felixgao.dev.webserver.sock|777
+	root * /home/felixgao/pub
+	file_server {
+		hide .git .env README.md
+	}
+}
+
+http://monitor.felixgao.hackclub.app, http://monitor.felixgao.dev {
+	bind unix/.monitor.webserver.sock|777
+	bind unix/.monitor.felixgao.dev.webserver.sock|777
+
+	reverse_proxy :57583
+}
