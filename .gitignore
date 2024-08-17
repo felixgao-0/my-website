@@ -2,3 +2,21 @@
 
 README.md
 LICENSE
+
+.bash-history
+.bash-logout
+
+# Cache and config files
+.cache/*
+.config/*
+
+# Idk what these are but we don't need to track em
+.face
+.face.icon
+.kshrc
+.lesshst
+.local/*
+.nix-defexpr/*
+.nix-profile
+.profile
+.python_history
