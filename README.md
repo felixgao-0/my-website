@@ -13,7 +13,7 @@ Just this repo ig, I'm not cloning yet from this repo but will soon!
 
 ## Features & Pages
 <details>
-<summary>Nest Resource Monitor (monitor.felixgao.hackclub.app)</summary>
+<summary>Nest Resource Monitor (monitor.felixgao.dev)</summary>
 <br>
 A monitor to view your live usage of CPU, memory, and storage. Features very nice graphs :D.
 
