@@ -13,3 +13,13 @@ View a functional demo here on [replit](https://replit.com/@CoolDude9000/Nest-We
 Sit back, relax, and watch Nest implode (/hj)! You can view global usage, aka the important bit, or if you feel _extra nosy_ you can see how my usages compare.
 
 *disclaimer: the cpu graph for my usage is based on a count of usages by pid, it doesn't appear to be very accurate and can spike above global sometimes. I promise I'm not nuking Nest!
+
+## How to host it yourself
+
+Add everything in `resource_monitor/` into Nest. Run `nest get_port` to obtain a port on Nest. Run the flask app on that port and setup systemd to keep the flask app running. Open your Caddyfile and  setup a reverse proxy to the port. Go onto the site and watch your very own resources implode!
+
+```
+www.example.com {
+  reverse_proxy :1000 # Example port
+}
+```
