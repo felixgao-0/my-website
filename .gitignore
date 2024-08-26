@@ -1,7 +1,11 @@
-# Ignore this github!
+# Replit files
+.breakpoints
+.replit
 
+# Bash files
 .bash-history
-.bash-logout
+.bash_logout
+.bashrc
 
 # Cache and config files
 .cache/*
@@ -17,3 +21,6 @@
 .nix-profile
 .profile
 .python_history
+
+# Env
+.env
