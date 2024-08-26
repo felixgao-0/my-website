@@ -37,4 +37,5 @@ def add_url(path, destination, analytics) -> None:
 
 
 def check_exists() -> bool:
-    ...
+    with psycopg.connect(**conn_params) as conn, conn.cursor() as cur:
+        ...
