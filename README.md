@@ -9,7 +9,7 @@ Hosted on Nest! Nest is a free website host run by Hack Club! Free for anyone un
 
 ## Setup
 
-Just this repo ig, I'm not cloning yet from this repo but will soon!
+Just this repo ig, I'm not cloning yet from this repo but will soon! I'm working on an SSH github action to push this repo to Nest.
 
 ## Features & Pages
 <details>
