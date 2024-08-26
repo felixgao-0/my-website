@@ -2,10 +2,11 @@
 .breakpoints
 .replit
 
-# Bash files
-.bash-history
+# Random bash + psql files
+.bash_history
 .bash_logout
 .bashrc
+.psql_history
 
 # Cache and config files
 .cache/*
@@ -22,5 +23,6 @@
 .profile
 .python_history
 
-# Env
+# Env + git
 .env
+.gitconfig
