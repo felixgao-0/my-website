@@ -2,6 +2,7 @@
 
 A monitor to view your live usage of CPU, memory, and storage. Features very nice graphs :D.
 
+<<<<<<< Updated upstream
 View a functional demo here on [replit](https://replit.com/@CoolDude9000/Nest-Website), or on Nest on [my website](https://monitor.felixgao.hackclub.app)! 
 
 ![image](https://github.com/user-attachments/assets/009cdd46-7d6b-4614-a8aa-025321479dcd)
@@ -23,3 +24,13 @@ www.example.com {
   reverse_proxy :1000 # Example port
 }
 ```
+=======
+## TODO:
+### My stuff:
+- [x] Show mem usage & limit
+- [x] Show CPU usage
+- [x] Show storage usage & limit
+
+### More nest related:
+- [x] Show global utlization
+>>>>>>> Stashed changes
