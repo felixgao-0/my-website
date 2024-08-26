@@ -24,3 +24,8 @@ View a functional demo here at https://replit.com/@CoolDude9000/Nest-Website, or
 ![image](https://github.com/user-attachments/assets/a2dba072-0742-4fc0-a5d9-1f814d9d5330)
 </details>
 
+<details>
+<summary>URL Shortener (Coming soon tm)</summary>
+<br>
+Coming soon!
+</details>
