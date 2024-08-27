@@ -1,6 +1,6 @@
 import os
 
-import psycopg  # Portgresql db driver v3
+import psycopg  # PostgreSQL db driver v3
 
 
 conn_params = {
@@ -11,32 +11,38 @@ conn_params = {
     "port": "5432"
 }
 
-# Note to self, databse format
+# Note to self, database table formats :D
 """
- path | destination | analytics_url | analytics_data 
-------+-------------+---------------+----------------
+felixgao_url_shortener=> SELECT * FROM URLs;
+ id | original_url | shortened_url | analytics_url 
+----+--------------+---------------+---------------
+(0 rows)
+
+felixgao_url_shortener=> SELECT * FROM Analytics;
+ id | url_id | created_at | referrer | user_agent | ip_address 
+----+--------+------------+----------+------------+------------
 (0 rows)
 """
 
-def get_url(shortened_path) -> list:
+def get_url(shortened_path: str) -> list:
     """
     Gets a database entry for a URL
     """
     with psycopg.connect(**conn_params) as conn, conn.cursor() as cur:
-        cur.execute(f"SELECT * FROM urls WHERE destination = {shortened_path};")
+        cur.execute(f"SELECT * FROM URLs WHERE shortened_url = {shortened_path};")
         result = [item[0] for item in cur.fetchall()]
         conn.commit()
     return result
 
 
-def add_url(path, destination, analytics) -> None:
+def add_url(original_url: str, shortened_url: str, analytics_url: str) -> None:
     """
     Creates a database entry for a new URL
     """
     with psycopg.connect(**conn_params) as conn, conn.cursor() as cur:
         cur.execute(f"""
-        INSERT INTO urls (path, destination, analytics_url, analytics_data)
-        VALUES ('{path}', '{destination}', '{analytics}', 'null');
+        INSERT INTO URLs (original_url, shortened_url, analytics_url) 
+        VALUES ({original_url}, {shortened_url}, {analytics_url});
         """)
 
         conn.commit()
@@ -50,4 +56,4 @@ def check_exists(table_item, table_value) -> bool:
         ...
 
 if __name__ == "__main__":
-    add_url("/test123", "felixgao.dev", "test5")
+    add_url("test123", "felixgao.dev", "test5")
