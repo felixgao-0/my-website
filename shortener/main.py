@@ -36,8 +36,8 @@ def url_shortener(url_path):
 
 @app.route('/api/create_url', methods=["POST"])
 def _api_url_creator():
-    new_url = request.form.get("shortened-link")
-    old_url = request.form.get("original-link")
+    new_url = request.form.get("shortened-link-field")
+    old_url = request.form.get("original-link-field")
 
     # Checks go burr
     if new_url is None or old_url is None:
@@ -51,7 +51,7 @@ def _api_url_creator():
         return "Invalid URL to convert into", 400
 
     try: # Returns ValidationError when url is invalid
-        validators.url.url(old_url)
+        validators.url(old_url)
     except validators.utils.ValidationError:
         return "Invalid URL", 400
 

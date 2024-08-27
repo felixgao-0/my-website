@@ -1,0 +1,7 @@
+# Test script for the api :D
+
+# Don't mind my ip address pls no ddos me /s
+POST 127.0.0.1:8080/api/create_url
+Content-Type: application/x-www-form-urlencoded
+
+shortened-link-field=monitor&original-link-field=monitor.felixgao.dev

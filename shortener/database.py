@@ -26,7 +26,7 @@ felixgao_url_shortener=> SELECT * FROM Analytics;
 
 def get_url(shortened_url: str) -> list:
     """
-    Gets a database entry for a URL
+    Fetch URL data from the database
     """
     with psycopg.connect(**conn_params) as conn, conn.cursor() as cur:
         cur.execute(f"SELECT * FROM URLs WHERE shortened_url = '{shortened_url}';")
@@ -35,10 +35,11 @@ def get_url(shortened_url: str) -> list:
 
 def get_analytics(analytics_url: str) -> list:
     """
-    Gets a database entry for a URL
+    Fetch analytics data from the database
     """
     with psycopg.connect(**conn_params) as conn, conn.cursor() as cur:
         cur.execute(f"SELECT * FROM URLs WHERE analytics_url = '{analytics_url}';")
+        # TODO: Take item from that result and grab analytics with matching ID
         return cur.fetchall()
 
 
@@ -49,7 +50,21 @@ def add_url(original_url: str, shortened_url: str, analytics_url: str) -> None:
     with psycopg.connect(**conn_params) as conn, conn.cursor() as cur:
         cur.execute(f"""
         INSERT INTO URLs (original_url, shortened_url, analytics_url) 
-        VALUES ({original_url}, {shortened_url}, {analytics_url});
+        VALUES ('{original_url}', '{shortened_url}', '{analytics_url}');
+        """)
+
+        conn.commit()
+
+
+def add_analytics(original_url: str, shortened_url: str, analytics_url: str) -> None:
+    """
+    Creates a database entry for analytics
+    """
+    raise NotImplemented("Not quite there yet, don't blow up the db!")
+    with psycopg.connect(**conn_params) as conn, conn.cursor() as cur:
+        cur.execute(f"""
+        INSERT INTO URLs (original_url, shortened_url, analytics_url) 
+        VALUES ('{original_url}', '{shortened_url}', '{analytics_url}');
         """)
 
         conn.commit()
@@ -59,6 +74,7 @@ def check_exists(table_item, table_value) -> bool:
     """
     Checks if a table item already exists
     """
+    raise NotImplemented("Not quite there yet, don't blow up the db!")
     with psycopg.connect(**conn_params) as conn, conn.cursor() as cur:
         ...
 
