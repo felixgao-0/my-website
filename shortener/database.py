@@ -24,15 +24,22 @@ felixgao_url_shortener=> SELECT * FROM Analytics;
 (0 rows)
 """
 
-def get_url(shortened_path: str) -> list:
+def get_url(shortened_url: str) -> list:
     """
     Gets a database entry for a URL
     """
     with psycopg.connect(**conn_params) as conn, conn.cursor() as cur:
-        cur.execute(f"SELECT * FROM URLs WHERE shortened_url = {shortened_path};")
-        result = [item[0] for item in cur.fetchall()]
-        conn.commit()
-    return result
+        cur.execute(f"SELECT * FROM URLs WHERE shortened_url = '{shortened_url}';")
+        return cur.fetchall()
+
+
+def get_analytics(analytics_url: str) -> list:
+    """
+    Gets a database entry for a URL
+    """
+    with psycopg.connect(**conn_params) as conn, conn.cursor() as cur:
+        cur.execute(f"SELECT * FROM URLs WHERE analytics_url = '{analytics_url}';")
+        return cur.fetchall()
 
 
 def add_url(original_url: str, shortened_url: str, analytics_url: str) -> None:
