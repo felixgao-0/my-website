@@ -10,9 +10,17 @@
     <h1>URL Shortener</h1>
     <p>By Felix G. - Hosted with 💖 on <a href="https://hackclub.app">Nest</a></p>
 
+    <div>
+        <p id="error-box" style="display: none;"></p>
+    </div>
+
     <form method="POST" action="/api/create_url">
-        <input type="text" id="original-link-field">
-        <input type="text" id="shortened-link-field">
+        <label for="original-link-field">Original URL:</label>
+        <input type="text" name="original-link-field" id="original-link-field"><br>
+
+        <label for="shortened-link-field">New URL Path:</label>
+        <p>url.dino.icu/u/</p><input type="text" name="shortened-link-field" id="shortened-link-field">
+
         <input type="submit">
     </form>
 </body>
