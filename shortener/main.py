@@ -22,7 +22,15 @@ def url_shortener(url_path):
 
 @app.route('/api/create_url', methods=["POST"])
 def _api_url_creator(url_path):
+    forbidden_url_paths = ["api", "analytics", "admin", "main"]
+    if url_path in forbidden_url_paths:
+        return "Reserved URL paths", 400
+
+    if re.compile(r'^[a-zA-Z0-9]+$').match(url_path):
+        return "Invalid URL", 400
+
     analytics_url = "".join(
+        # Generate a 10 character string of numbers + letters
         random.choice(string.ascii_letters + string.digits) for _ in range(10)
     )
     return "test create a url here"
