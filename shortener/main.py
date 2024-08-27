@@ -1,14 +1,18 @@
 import random
 import string
+import re
 
-from flask import Flask
+from flask import Flask, request
 import flask
+
+import database
 
 app = Flask(
     'app', 
-    template_folder="shortener/template/",
-    static_folder='shortener/static'
+    template_folder="template/",
+    static_folder='static/'
 )
+
 
 @app.route('/')
 def landing_page():
@@ -17,16 +21,23 @@ def landing_page():
 
 @app.route('/<url_path>')
 def url_shortener(url_path):
-    return "test shortened url"
+    new_url = database.get_url(url_path)
+    return flask.redirect(new_url[0], code=301) # Temp redirect
 
 
 @app.route('/api/create_url', methods=["POST"])
-def _api_url_creator(url_path):
+def _api_url_creator():
+    new_url = request.form.get("shortened-link")
+    old_url = request.form.get("original-link")
+
+    if new_url is None or old_url is None:
+        return "Form data missing", 400
+
     forbidden_url_paths = ["api", "analytics", "admin", "main"]
-    if url_path in forbidden_url_paths:
+    if new_url in forbidden_url_paths:
         return "Reserved URL paths", 400
 
-    if re.compile(r'^[a-zA-Z0-9]+$').match(url_path):
+    if not re.compile(r'^[a-zA-Z0-9]+$').match(new_url):
         return "Invalid URL", 400
 
     analytics_url = "".join(
@@ -41,4 +52,4 @@ def analytics(analytics_path):
     return "analytics test"
 
 
-app.run(host='0.0.0.0', port=8080)
+app.run(host='0.0.0.0', port=8080, debug=True)
