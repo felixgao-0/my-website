@@ -44,8 +44,7 @@ def url_shortener(url_path):
     db.add_analytics(
         int(result[0][0]),
         request.referrer,
-        request.headers.get('User-Agent'),
-        request.remote_addr
+        request.headers.get('User-Agent')
     )
 
     # Note to self: HTTP 302 = temp redirect, don't use HTTP 301 it breaks everything D:

@@ -73,13 +73,13 @@ class Database:
         self.conn.commit()
 
 
-    def add_analytics(self, url_id: int, referrer: str, user_agent: str, ip_addr: str) -> None:
+    def add_analytics(self, url_id: int, referrer: str, user_agent: str) -> None:
         """
         Creates a database entry for analytics
         """
         self.cur.execute(f"""
-        INSERT INTO Analytics (url_id, referrer, user_agent, ip_address)
-        VALUES ('{url_id}', '{referrer}', '{user_agent}', '{ip_addr}');
+        INSERT INTO Analytics (url_id, referrer, user_agent)
+        VALUES ('{url_id}', '{referrer}', '{user_agent}');
         """)
         self.conn.commit()
 
