@@ -29,3 +29,13 @@ function createUrl(event) {
 
     document.getElementById("create-url-form").submit();
 }
+
+document.addEventListener("DOMContentLoaded", (event) => {
+    console.log("DOM has fully loaded");
+
+    const form = document.getElementById("create-url-form");
+
+    form.addEventListener("submit", (event) => {
+        createUrl(event);
+    });
+});

@@ -26,6 +26,7 @@ felixgao_url_shortener=> SELECT * FROM Analytics;
 
 class Database:
     def __init__(self):
+        print("Database opened")
         self.conn = psycopg.connect(**conn_params)
         self.cur = self.conn.cursor()
 
@@ -36,6 +37,7 @@ class Database:
 
         :return: Nothing
         """
+        print("Database closed")
         if self.cur is not None:
             self.cur.close()
 
@@ -43,64 +45,57 @@ class Database:
             self.conn.close()
 
 
-def get_url(shortened_url: str) -> list:
-    """
-    Fetch URL data from the database
-    """
-    with psycopg.connect(**conn_params) as conn, conn.cursor() as cur:
-        cur.execute(f"SELECT * FROM URLs WHERE shortened_url = '{shortened_url}';")
-        return cur.fetchall()
+    def get_url(self, shortened_url: str) -> list:
+        """
+        Fetch URL data from the database
+        """
+        self.cur.execute(f"SELECT * FROM URLs WHERE shortened_url = '{shortened_url}';")
+        return self.cur.fetchall()
 
 
-def get_analytics(analytics_url: str) -> list:
-    """
-    Fetch analytics data from the database
-    """
-    with psycopg.connect(**conn_params) as conn, conn.cursor() as cur:
-        cur.execute(f"SELECT * FROM URLs WHERE analytics_url = '{analytics_url}';")
+    def get_analytics(self, analytics_url: str) -> list:
+        """
+        Fetch analytics data from the database
+        """
+        self.cur.execute(f"SELECT * FROM URLs WHERE analytics_url = '{analytics_url}';")
         # TODO: Take item from that result and grab analytics with matching ID
-        return cur.fetchall()
+        return self.cur.fetchall()
 
 
-def add_url(original_url: str, shortened_url: str, analytics_url: str) -> None:
-    """
-    Creates a database entry for a new URL
-    """
-    with psycopg.connect(**conn_params) as conn, conn.cursor() as cur:
-        cur.execute(f"""
+    def add_url(self, original_url: str, shortened_url: str, analytics_url: str) -> None:
+        """
+        Creates a database entry for a new URL
+        """
+        self.cur.execute(f"""
         INSERT INTO URLs (original_url, shortened_url, analytics_url) 
         VALUES ('{original_url}', '{shortened_url}', '{analytics_url}');
         """)
+        self.conn.commit()
 
-        conn.commit()
 
-
-def add_analytics(url_id: int, referrer: str, user_agent: str, ip_addr: str) -> None:
-    """
-    Creates a database entry for analytics
-    """
-    with psycopg.connect(**conn_params) as conn, conn.cursor() as cur:
-        cur.execute(f"""
+    def add_analytics(self, url_id: int, referrer: str, user_agent: str, ip_addr: str) -> None:
+        """
+        Creates a database entry for analytics
+        """
+        self.cur.execute(f"""
         INSERT INTO Analytics (url_id, referrer, user_agent, ip_address)
         VALUES ('{url_id}', '{referrer}', '{user_agent}', '{ip_addr}');
         """)
+        self.conn.commit()
 
-        conn.commit()
 
+    def check_url_exists(self, table_item: str, table_value: str) -> bool:
+        """
+        Checks if a table item already exists
+        """
+        self.cur.execute(f"SELECT COUNT(*) FROM URLs where {table_item} = '{table_value}';")
+        result = self.cur.fetchall()
 
-def check_url_exists(table_item, table_value) -> bool:
-    """
-    Checks if a table item already exists
-    """
-    with psycopg.connect(**conn_params) as conn, conn.cursor() as cur:
-        cur.execute(f"SELECT COUNT(*) FROM URLs where {table_item} = '{table_value}';")
-        result = cur.fetchall()
+        if result[0][0] > 1:
+            raise ValueError("Somethings messed up in the database to have 2 of the same URL")
+        else:
+            return result[0][0] != 0
 
-    print(result)
-    if result[0][0] > 1:
-        raise ValueError("Somethings messed up in the database to have 2 of the same URL")
-    else:
-        return result[0][0] != 0
 
 if __name__ == "__main__":
-    check_url_exists("shortened_url", "monitor")
+    ...

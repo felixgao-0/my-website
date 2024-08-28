@@ -15,25 +15,33 @@ app = Flask(
     static_folder='static/'
 )
 
+db = database.Database()
+
 
 @app.route('/')
 def landing_page():
     return flask.render_template("index.html")
 
 
+@app.route('/analytics/<analytics_path>')
+def analytics(analytics_path):
+    #result = db.get_analytics(url_path)
+    return "analytics test"
+
+
 @app.route('/test')
 def test_page_lol():
-    return str(database.check_url_exists("analytics_url", "pnYnM5YXp6"))
+    return str(db.check_url_exists("analytics_url", "pnYnM5YXp6"))
 
 
 @app.route('/u/<url_path>')
 def url_shortener(url_path):
-    result = database.get_url(url_path)
+    result = db.get_url(url_path)
     if not result:
         return "Not found", 404
     new_url = result[0][1]
 
-    database.add_analytics(
+    db.add_analytics(
         int(result[0][0]),
         request.referrer,
         request.headers.get('User-Agent'),
@@ -69,23 +77,18 @@ def _api_url_creator():
     if isinstance(validators.url(old_url), validators.utils.ValidationError):
         return "Invalid URL to shorten", 400
 
-    if database.check_url_exists("shortened_url", new_url):
+    if db.check_url_exists("shortened_url", new_url):
         return "URL already exists", 409 # HTTP 409 = conflict
 
     analytics_url = "".join(
         # Generate a 10 character string of alphanumeric characters
         random.choice(string.ascii_letters + string.digits) for _ in range(10)
     )
-    database.add_url(old_url, new_url, analytics_url) # Add DB entry
+    db.add_url(old_url, new_url, analytics_url) # Add DB entry
     return "Url created", 201
 
 
-@app.route('/analytics/<analytics_path>')
-def analytics(analytics_path):
-    #result = database.get_analytics(url_path)
-    return "analytics test"
-
-
-atexit.register(lambda: print("exit cleanup func"))
+# Close the database on code end
+atexit.register(lambda: db.close())
 
 app.run(host='0.0.0.0', port=8080, debug=True)
