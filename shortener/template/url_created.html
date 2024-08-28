@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 
 {% block head %}
+    <script src="{{ url_for('static', filename='clipboardScript.js') }}"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
 {% endblock %}
 
@@ -10,7 +11,9 @@
     <p>Your URL was just made (haphazardly stuck inside PortgreSQL /s)!</p>
 
     <div>
-        <p>Share your URL with the world! {{ shortened_url }}</p>
-        <p>Pst... view your URL analytics here! {{ analytics_url }}</p>
+        <p>Share your URL with the world! <span id="clipboard-shortened">{{ shortened_url }}</span></p>
+        <button id="btn-shortened">Copy</button><br>
+        <p>Pst... view your URL analytics here! <span id="clipboard-analytics">{{ analytics_url }}</span></p>
+        <button id="btn-analytics">Copy</button>
     </div>
 {% endblock %}
