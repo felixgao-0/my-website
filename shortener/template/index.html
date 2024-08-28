@@ -1,4 +1,10 @@
 {% extends "layout.html" %}
+
+{% block head %}
+<script src="{{ url_for('static', filename='formHandler.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+{% endblock %}
+
 {% block content %}
 <h1>URL Shortener</h1>
 <p>By Felix G. - Hosted with 💖 on <a href="https://hackclub.app">Nest</a></p>
@@ -7,13 +13,16 @@
     <p id="error-box" style="display: none;"></p>
 </div>
 
-<form method="POST" action="/api/create_url" id="create-url-form">
-    <label for="original-link-field">Original URL:</label>
+<form method="POST" action="{{ url_for('_api_url_creator') }}" id="create-url-form">
+    <label for="original-link-field">URL to redirect to:</label><br>
     <input type="text" name="original-link-field" id="original-link-field"><br>
     <p id="original-link-field-error" role="alert"></p>
 
-    <label for="shortened-link-field">New URL Path:</label>
-    <p>url.dino.icu/u/</p><input type="text" name="shortened-link-field" id="shortened-link-field">
+    <label for="shortened-link-field">URL will become:</label><br>
+    <div class="input-group">
+        <p>url.dino.icu/u/</p>
+        <input type="text" name="shortened-link-field" id="shortened-link-field">
+    </div>
     <p id="original-link-field-error" role="alert"></p>
 
     <input type="submit">
