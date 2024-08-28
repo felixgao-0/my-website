@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% extends content %}
+{% block content %}
 <h1>URL Shortener</h1>
 <p>By Felix G. - Hosted with 💖 on <a href="https://hackclub.app">Nest</a></p>
 
@@ -10,9 +10,11 @@
 <form method="POST" action="/api/create_url" id="create-url-form">
     <label for="original-link-field">Original URL:</label>
     <input type="text" name="original-link-field" id="original-link-field"><br>
+    <p id="original-link-field-error" role="alert"></p>
 
     <label for="shortened-link-field">New URL Path:</label>
     <p>url.dino.icu/u/</p><input type="text" name="shortened-link-field" id="shortened-link-field">
+    <p id="original-link-field-error" role="alert"></p>
 
     <input type="submit">
 </form>

@@ -27,6 +27,13 @@ def url_shortener(url_path):
         return "Not found", 404
     new_url = result[0][1]
 
+    database.add_analytics(
+        int(result[0][0]),
+        request.referrer,
+        request.headers.get('User-Agent'),
+        request.remote_addr
+    )
+
     # Note to self: HTTP 302 = temp redirect, don't use HTTP 301 it breaks everything D:
     if new_url.startswith("https://") or new_url.startswith("http://"):
         return flask.redirect(new_url, code=302) # Temp redirect

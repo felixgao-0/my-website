@@ -49,22 +49,21 @@ def add_url(original_url: str, shortened_url: str, analytics_url: str) -> None:
     """
     with psycopg.connect(**conn_params) as conn, conn.cursor() as cur:
         cur.execute(f"""
-        INSERT INTO URLs (original_url, shortened_url, analytics_url) 
+        INSERT INTO URLs (orininal_url, shortened_url, analytics_url) 
         VALUES ('{original_url}', '{shortened_url}', '{analytics_url}');
         """)
 
         conn.commit()
 
 
-def add_analytics(original_url: str, shortened_url: str, analytics_url: str) -> None:
+def add_analytics(url_id: int, referrer: str, user_agent: str, ip_addr: str) -> None:
     """
     Creates a database entry for analytics
     """
-    raise NotImplemented("Not quite there yet, don't blow up the db!")
     with psycopg.connect(**conn_params) as conn, conn.cursor() as cur:
         cur.execute(f"""
-        INSERT INTO URLs (original_url, shortened_url, analytics_url) 
-        VALUES ('{original_url}', '{shortened_url}', '{analytics_url}');
+        INSERT INTO Analytics (url_id, referrer, user_agent, ip_address)
+        VALUES ('{url_id}', '{referrer}', '{user_agent}', '{ip_addr}');
         """)
 
         conn.commit()
