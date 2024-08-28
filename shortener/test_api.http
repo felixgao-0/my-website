@@ -4,4 +4,4 @@
 POST 127.0.0.1:8080/api/create_url
 Content-Type: application/x-www-form-urlencoded
 
-shortened-link-field=monitor&original-link-field=monitor.felixgao.dev
+shortened-link-field=woah&original-link-field=monitor

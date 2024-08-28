@@ -24,6 +24,25 @@ felixgao_url_shortener=> SELECT * FROM Analytics;
 (0 rows)
 """
 
+class Database:
+    def __init__(self):
+        self.conn = psycopg.connect(**conn_params)
+        self.cur = self.conn.cursor()
+
+
+    def close(self):
+        """
+        Close the database connection
+
+        :return: Nothing
+        """
+        if self.cur is not None:
+            self.cur.close()
+
+        if self.conn is not None:
+            self.conn.close()
+
+
 def get_url(shortened_url: str) -> list:
     """
     Fetch URL data from the database
@@ -49,7 +68,7 @@ def add_url(original_url: str, shortened_url: str, analytics_url: str) -> None:
     """
     with psycopg.connect(**conn_params) as conn, conn.cursor() as cur:
         cur.execute(f"""
-        INSERT INTO URLs (orininal_url, shortened_url, analytics_url) 
+        INSERT INTO URLs (original_url, shortened_url, analytics_url) 
         VALUES ('{original_url}', '{shortened_url}', '{analytics_url}');
         """)
 
@@ -69,13 +88,19 @@ def add_analytics(url_id: int, referrer: str, user_agent: str, ip_addr: str) -> 
         conn.commit()
 
 
-def check_exists(table_item, table_value) -> bool:
+def check_url_exists(table_item, table_value) -> bool:
     """
     Checks if a table item already exists
     """
-    raise NotImplemented("Not quite there yet, don't blow up the db!")
     with psycopg.connect(**conn_params) as conn, conn.cursor() as cur:
-        ...
+        cur.execute(f"SELECT COUNT(*) FROM URLs where {table_item} = '{table_value}';")
+        result = cur.fetchall()
+
+    print(result)
+    if result[0][0] > 1:
+        raise ValueError("Somethings messed up in the database to have 2 of the same URL")
+    else:
+        return result[0][0] != 0
 
 if __name__ == "__main__":
-    add_url("test123", "felixgao.dev", "test5")
+    check_url_exists("shortened_url", "monitor")

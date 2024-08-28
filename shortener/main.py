@@ -1,3 +1,4 @@
+import atexit
 import random
 import string
 import re
@@ -18,6 +19,11 @@ app = Flask(
 @app.route('/')
 def landing_page():
     return flask.render_template("index.html")
+
+
+@app.route('/test')
+def test_page_lol():
+    return str(database.check_url_exists("analytics_url", "pnYnM5YXp6"))
 
 
 @app.route('/u/<url_path>')
@@ -50,20 +56,24 @@ def _api_url_creator():
     if new_url is None or old_url is None:
         return "Form data missing", 400
 
-    forbidden_url_paths = ["api", "analytics", "admin", "main"]
-    if new_url in forbidden_url_paths:
-        return "Reserved URL paths", 400
+    forbidden_url_paths = ["api", "analytics", "admin", "login", "dashboard", "settings", "manage"]
+    if new_url.lower() in forbidden_url_paths:
+        return "Reserved URL path", 400
 
     if not re.compile(r'^[a-zA-Z0-9]+$').match(new_url):
-        return "Invalid URL to convert into", 400
+        return "Shortened URL can only contain alphanumeric characters", 400
 
-    try: # Returns ValidationError when url is invalid
-        validators.url(old_url)
-    except validators.utils.ValidationError:
-        return "Invalid URL", 400
+    if len(new_url) > 15:
+        return "Shortened URL is too long", 413 # HTTP 413 = too large
+
+    if isinstance(validators.url(old_url), validators.utils.ValidationError):
+        return "Invalid URL to shorten", 400
+
+    if database.check_url_exists("shortened_url", new_url):
+        return "URL already exists", 409 # HTTP 409 = conflict
 
     analytics_url = "".join(
-        # Generate a 10 character string of numbers + letters
+        # Generate a 10 character string of alphanumeric characters
         random.choice(string.ascii_letters + string.digits) for _ in range(10)
     )
     database.add_url(old_url, new_url, analytics_url) # Add DB entry
@@ -75,5 +85,7 @@ def analytics(analytics_path):
     #result = database.get_analytics(url_path)
     return "analytics test"
 
+
+atexit.register(lambda: print("exit cleanup func"))
 
 app.run(host='0.0.0.0', port=8080, debug=True)
