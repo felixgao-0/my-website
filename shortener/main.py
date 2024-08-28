@@ -84,7 +84,11 @@ def _api_url_creator():
         random.choice(string.ascii_letters + string.digits) for _ in range(10)
     )
     db.add_url(old_url, new_url, analytics_url) # Add DB entry
-    return "Url created", 201
+    return flask.render_template(
+        "url_created.html",
+        shortened_url=new_url,
+        analytics_url=analytics_url
+    ), 201
 
 
 # Close the database on code end
