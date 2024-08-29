@@ -19,8 +19,8 @@ felixgao_url_shortener=> SELECT * FROM URLs;
 (0 rows)
 
 felixgao_url_shortener=> SELECT * FROM Analytics;
- id | url_id | created_at | referrer | user_agent | ip_address 
-----+--------+------------+----------+------------+------------
+ id | url_id | created_at | referrer | user_agent 
+----+--------+------------+----------+------------
 (0 rows)
 """
 

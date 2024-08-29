@@ -1,7 +1,9 @@
 import atexit
+import os
 import random
 import string
 import re
+from calendar import error
 
 import validators
 from flask import Flask, request
@@ -15,6 +17,8 @@ app = Flask(
     static_folder='static/'
 )
 
+app.secret_key = os.environ['FLASK_SECRET_KEY']
+
 db = database.Database()
 
 
@@ -23,15 +27,15 @@ def landing_page():
     return flask.render_template("index.html")
 
 
-@app.route('/analytics/<analytics_path>')
-def analytics(analytics_path):
-    #result = db.get_analytics(url_path)
-    return "analytics test"
-
-
 @app.route('/test')
 def test_page_lol():
     return str(db.get_analytics("test5"))
+
+
+@app.route('/analytics/<analytics_path>')
+def analytics(analytics_path):
+    result = db.get_analytics(analytics_path)
+    return flask.render_template("analytics.html", analytics=result)
 
 
 @app.route('/u/<url_path>')
@@ -56,28 +60,37 @@ def url_shortener(url_path):
 
 @app.route('/create_url', methods=["POST"])
 def _api_url_creator():
+    error_state = False
     new_url = request.form.get("shortened-link-field")
     old_url = request.form.get("original-link-field")
 
     # Checks go burr
     if new_url is None or old_url is None:
-        return "Form data missing", 400
+        flask.flash("HQ, we're missing data! Make a Github Issue to have this fixed or try again.")
 
-    forbidden_url_paths = ["api", "analytics", "admin", "login", "dashboard", "settings", "manage"]
+    forbidden_url_paths = ["api", "analytics", "analytic", "admin", "login", "dashboard", "settings", "manage"]
     if new_url.lower() in forbidden_url_paths:
-        return "Reserved URL path", 400
+        flask.flash("That shortened URL path is reserved!")
+        error_state = True
 
     if not re.compile(r'^[a-zA-Z0-9]+$').match(new_url):
-        return "Shortened URL can only contain alphanumeric characters", 400
+        flask.flash("Whoops! The URL can only contain alphanumeric characters.")
+        error_state = True
 
     if len(new_url) > 15:
-        return "Shortened URL is too long", 413 # HTTP 413 = too large
+        flask.flash("Woah wheres the end? The shortened URL path is too long.")
+        error_state = True
 
     if isinstance(validators.url(old_url), validators.utils.ValidationError):
-        return "Invalid URL to shorten", 400
+        flask.flash("That's an invalid URL. Does it start with https://?")
+        error_state = True
 
     if db.check_url_exists("shortened_url", new_url):
-        return "URL already exists", 409 # HTTP 409 = conflict
+        flask.flash("Sorry, that shortened URL has already been taken! Our database hates twins.")
+        error_state = True
+
+    if error_state:
+        return flask.redirect(flask.url_for('landing_page'))
 
     while True:
         analytics_url = "".join(
@@ -90,8 +103,8 @@ def _api_url_creator():
     db.add_url(old_url, new_url, analytics_url) # Add DB entry
     return flask.render_template(
         "url_created.html",
-        shortened_url=f"https://url.dino.icu/u/{new_url}",
-        analytics_url=f"127.0.0.1:8080/analytics/{analytics_url}"
+        shortened_url=f"https://url.felixgao.dev/u/{new_url}",
+        analytics_url=f"https://url.felixgao.dev/analytics/{analytics_url}"
     ), 201
 
 

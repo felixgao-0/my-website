@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='analytics.css') }}">
+{% endblock %}
+
+{% block content %}
+    <h1>Analytic Stonks</h1>
+
+    <table>
+        <tr>
+            <th>Date Clicked:</th>
+            <th>Referrer:</th>
+            <th>User Agent:</th>
+        </tr>
+        {% for click in analytics %}
+            <tr>
+                <th>{{ click[2].strftime("%m/%d/%Y, %H:%M:%S") }}</th>
+                <th>{{ click[3] }}</th>
+                <th>{{ click[4] }}</th>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

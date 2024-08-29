@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
     const form = document.getElementById("create-url-form");
 
-    form.addEventListener("submit", (event) => {
-        createUrl(event);
-    });
+    //form.addEventListener("submit", (event) => {
+    //    createUrl(event);
+    //});
 });

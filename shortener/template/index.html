@@ -9,22 +9,29 @@
     <h1>URL Shortener</h1>
     <p>By Felix G. - Hosted with 💖 on <a href="https://hackclub.app">Nest</a></p>
 
-    <div>
-       <p id="error-box" style="display: none;"></p>
+    <div id="create-url">
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul class="error-flashes">
+            <p>Mission control, we have errors which need your attention!</p>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    {% endwith %}
+
+        <form method="POST" action="{{ url_for('_api_url_creator') }}" id="create-url-form" class="center">
+            <label for="original-link-field">URL to redirect to:</label><br>
+            <input type="text" name="original-link-field" id="original-link-field" required><br>
+
+            <label for="shortened-link-field">URL will become:</label><br>
+            <div class="input-group center">
+                <p>url.felixgao.dev/u/</p>
+                <input type="text" name="shortened-link-field" id="shortened-link-field" required>
+            </div>
+
+            <input type="submit" value="Shorten my URL!" id="submit-btn">
+        </form>
     </div>
-
-    <form method="POST" action="{{ url_for('_api_url_creator') }}" id="create-url-form" class="center">
-        <label for="original-link-field">URL to redirect to:</label><br>
-        <input type="text" name="original-link-field" id="original-link-field"><br>
-        <p id="original-link-field-error" role="alert"></p>
-
-        <label for="shortened-link-field">URL will become:</label><br>
-        <div class="input-group center">
-           <p>url.dino.icu/u/</p>
-           <input type="text" name="shortened-link-field" id="shortened-link-field">
-        </div>
-        <p id="original-link-field-error" role="alert"></p>
-
-        <input type="submit" value="Shorten my URL!" id="submit-btn">
-    </form>
 {% endblock %}
