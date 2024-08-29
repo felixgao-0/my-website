@@ -13,7 +13,7 @@ Just this repo ig, I'm not cloning yet from this repo but will soon! I'm working
 
 ## Features & Pages
 <details>
-<summary>Nest Resource Monitor (monitor.felixgao.dev)</summary>
+<summary>Nest Resource Monitor (https://monitor.felixgao.dev)</summary>
 <br>
 A monitor to view your live usage of CPU, memory, and storage. Features very nice graphs :D.
 
@@ -25,7 +25,13 @@ View a functional demo here at https://replit.com/@CoolDude9000/Nest-Website, or
 </details>
 
 <details>
-<summary>URL Shortener (Coming soon tm)</summary>
+<summary>URL Shortener (https://url.felixgao.dev/)</summary>
 <br>
-Coming soon!
+A simple URL converter. Functional but not pretty.
+
+![image](https://github.com/user-attachments/assets/96a16e55-0ede-43f6-8827-35929eefd5d3)
+
+A simple URL shortener to shorten all your life problems!
+
+Add the URL you want to shorten in the first field. Ensure it starts with https:// (this is a limitation of the URL validator used and seems to be required to redirect w/ flask anwyays). Then add the URL you want to convert into. The host is already filled out (As seen in the screenshot) so just add the end bit lol. The converted URL can **only contain** alphanumeric characters.
 </details>
