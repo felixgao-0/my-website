@@ -1,0 +1,6 @@
+# Test script for referers
+
+# Don't mind my ip address pls no ddos me /s
+GET 127.0.0.1:8080/u/monitor
+Content-Type: application/x-www-form-urlencoded
+Referer: www.google.com

@@ -1,2 +1,4 @@
 psutil
 flask
+psycopg
+validators

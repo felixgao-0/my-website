@@ -1,0 +1,38 @@
+#create-url {
+    border: gray solid;
+    border-radius: 10px;
+    width: 90%;
+}
+
+#submit-btn {
+    margin-bottom: 15px;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.error-flashes {
+    margin: 0.5rem auto 0.5rem auto;
+    width: 50%;
+    border: 3px solid #f6464d;
+    color: white;
+    border-radius: 8px;
+    background: #f6464d;
+    text-align: center;
+}
+
+.center {
+    text-align: center;
+    margin: auto;
+}
+
+.icon {
+    cursor: pointer;
+}
+
+ul {
+    list-style-position: inside;
+}

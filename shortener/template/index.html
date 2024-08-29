@@ -1,18 +1,37 @@
-<!DOCTYPE html>
-<html lang="en-US">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+{% extends "layout.html" %}
 
-    <title>URL Shortener</title>
-</head>
-<body>
+{% block head %}
+    <script src="{{ url_for('static', filename='formHandler.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+{% endblock %}
+
+{% block content %}
     <h1>URL Shortener</h1>
-    <p>By Felix G. - Hosted with 💖 on <a href="hackclub.app">Nest</a></p>
+    <p>By Felix G. - Hosted with 💖 on <a href="https://hackclub.app">Nest</a></p>
 
-    <form method="POST">
-        <input type="url">
-        <input type="submit">
-    </form>
-</body>
-</html>
+    <div id="create-url">
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul class="error-flashes">
+            <p>Mission control, we have errors which need your attention!</p>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    {% endwith %}
+
+        <form method="POST" action="{{ url_for('_api_url_creator') }}" id="create-url-form" class="center">
+            <label for="original-link-field">URL to redirect to:</label><br>
+            <input type="text" name="original-link-field" id="original-link-field" required><br>
+
+            <label for="shortened-link-field">URL will become:</label><br>
+            <div class="input-group center">
+                <p>url.felixgao.dev/u/</p>
+                <input type="text" name="shortened-link-field" id="shortened-link-field" required>
+            </div>
+
+            <input type="submit" value="Shorten my URL!" id="submit-btn">
+        </form>
+    </div>
+{% endblock %}

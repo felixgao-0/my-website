@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    <script src="{{ url_for('static', filename='clipboardScript.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+
+    <!-- Google Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+
+{% endblock %}
+
+{% block content %}
+    <h1>URL Created :D</h1>
+
+    <p>Your URL was just made (haphazardly stuck inside PortgreSQL /s)!</p>
+
+    <div>
+        <p>Share your URL with the world!</p>
+        <span id="clipboard-shortened">{{ shortened_url }}</span>
+        <span class="material-symbols-outlined icon" id="btn-shortened">content_paste</span>
+    </div><br>
+    <div>
+        <p>Pst... view your URL analytics here!</p>
+        <span id="clipboard-analytics">{{ analytics_url }}</span>
+        <span class="material-symbols-outlined icon" id="btn-analytics">content_paste</span>
+
+    </div>
+{% endblock %}
