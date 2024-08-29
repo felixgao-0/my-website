@@ -58,7 +58,9 @@ class Database:
         Fetch analytics data from the database
         """
         self.cur.execute(f"SELECT * FROM URLs WHERE analytics_url = '{analytics_url}';")
-        # TODO: Take item from that result and grab analytics with matching ID
+        url_id = self.cur.fetchall()[0][0] # Get url_id so search with on Analytics table
+
+        self.cur.execute(f"SELECT * FROM Analytics WHERE url_id = '{url_id}';")
         return self.cur.fetchall()
 
 
@@ -92,7 +94,7 @@ class Database:
         result = self.cur.fetchall()
 
         if result[0][0] > 1:
-            raise ValueError("Somethings messed up in the database to have 2 of the same URL")
+            raise ValueError("Somethings messed up in the database to have multiple of the same URL")
         else:
             return result[0][0] != 0
 

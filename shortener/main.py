@@ -31,7 +31,7 @@ def analytics(analytics_path):
 
 @app.route('/test')
 def test_page_lol():
-    return str(db.check_url_exists("analytics_url", "pnYnM5YXp6"))
+    return str(db.get_analytics("test5"))
 
 
 @app.route('/u/<url_path>')
@@ -54,7 +54,7 @@ def url_shortener(url_path):
         return flask.redirect("https://" + new_url, code=302) # Temp redirect
 
 
-@app.route('/api/create_url', methods=["POST"])
+@app.route('/create_url', methods=["POST"])
 def _api_url_creator():
     new_url = request.form.get("shortened-link-field")
     old_url = request.form.get("original-link-field")
@@ -79,15 +79,19 @@ def _api_url_creator():
     if db.check_url_exists("shortened_url", new_url):
         return "URL already exists", 409 # HTTP 409 = conflict
 
-    analytics_url = "".join(
-        # Generate a 10 character string of alphanumeric characters
-        random.choice(string.ascii_letters + string.digits) for _ in range(10)
-    )
+    while True:
+        analytics_url = "".join(
+            # Generate a 10 character string of alphanumeric characters
+            random.choice(string.ascii_letters + string.digits) for _ in range(10)
+        )
+        if not db.check_url_exists("analytics_url", analytics_url):
+            break
+
     db.add_url(old_url, new_url, analytics_url) # Add DB entry
     return flask.render_template(
         "url_created.html",
-        shortened_url=new_url,
-        analytics_url=analytics_url
+        shortened_url=f"https://url.dino.icu/u/{new_url}",
+        analytics_url=f"127.0.0.1:8080/analytics/{analytics_url}"
     ), 201
 
 
