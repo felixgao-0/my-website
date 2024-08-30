@@ -4,6 +4,12 @@
     width: 90%;
 }
 
+#original-link-field {
+    padding: 2px 2px;
+    box-sizing: border-box;
+    margin-bottom: 2rem;
+}
+
 #submit-btn {
     margin-bottom: 15px;
 }
@@ -31,6 +37,10 @@
 
 .icon {
     cursor: pointer;
+}
+
+.box {
+    width: 50%;
 }
 
 ul {

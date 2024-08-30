@@ -10,19 +10,18 @@
 {% endblock %}
 
 {% block content %}
-    <h1>URL Created :D</h1>
+    <h1>Your URL has been created! 🎉</h1>
 
-    <p>Your URL was just made (haphazardly stuck inside PortgreSQL /s)!</p>
+    <p>Haphazardly stuck inside PortgreSQL /hj</p>
 
-    <div>
+    <div class="box">
         <p>Share your URL with the world!</p>
-        <span id="clipboard-shortened">{{ shortened_url }}</span>
+        <p id="clipboard-shortened">{{ shortened_url }}</p>
         <span class="material-symbols-outlined icon" id="btn-shortened">content_paste</span>
-    </div><br>
-    <div>
+    </div>
+    <div class="box">
         <p>Pst... view your URL analytics here!</p>
-        <span id="clipboard-analytics">{{ analytics_url }}</span>
+        <p id="clipboard-analytics">{{ analytics_url }}</p>
         <span class="material-symbols-outlined icon" id="btn-analytics">content_paste</span>
-
     </div>
 {% endblock %}
