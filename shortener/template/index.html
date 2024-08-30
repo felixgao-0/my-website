@@ -20,16 +20,16 @@
         {% endif %}
     {% endwith %}
 
-    <form method="POST" action="{{ url_for('_api_url_creator') }}" id="create-url-form" class="center">
-        <div>
+    <form method="POST" action="{{ url_for('_api_url_creator') }}" id="create-url-form" class="center box">
+        <div class="form-item">
             <label for="original-link-field">URL to redirect to:</label><br>
-            <input type="text" name="original-link-field" id="original-link-field" required>
+            <input type="text" name="original-link-field" id="original-link-field" class="form-item" required>
         </div><br>
 
         <label for="shortened-link-field">URL will become:</label><br>
-        <div class="input-group box">
+        <div class="input-group">
             <p>url.felixgao.dev/u/</p>
-            <input type="text" name="shortened-link-field" id="shortened-link-field" required>
+            <input type="text" maxlength="15" name="shortened-link-field" id="shortened-link-field" class="form-item" required>
         </div>
 
         <input type="checkbox" id="confirm-checkbox">

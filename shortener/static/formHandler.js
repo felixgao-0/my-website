@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     //    createUrl(event);
     //});
 
-    // Enable submission upon agreement to my tos muahaha
+    // Enable submission upon agreement to my tos muhaha
     form.addEventListener("click", (event) => {
         document.getElementById("submit-btn").disabled = !document.getElementById("confirm-checkbox").checked;
     });

@@ -19,6 +19,10 @@ ul {
     justify-content: center;
 }
 
+.form-item {
+    width: 100%;
+}
+
 .box {
     width: 50%;
 }
