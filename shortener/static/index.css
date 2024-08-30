@@ -1,7 +1,36 @@
+ul {
+    list-style-position: inside;
+}
+
+.center {
+    text-align: center;
+    margin: auto;
+}
+
+/* Give the icon a pointer cursor, like a button */
+.icon {
+    cursor: pointer;
+}
+
+/* The styling for an input group, like in bootstrap! */
+.input-group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.box {
+    width: 50%;
+}
+
 #create-url {
     border: gray solid;
     border-radius: 10px;
     width: 90%;
+}
+
+#confirm-checkbox {
+    margin-bottom: 2rem;
 }
 
 #original-link-field {
@@ -11,38 +40,17 @@
 }
 
 #submit-btn {
-    margin-bottom: 15px;
-}
-
-.input-group {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.error-flashes {
-    margin: 0.5rem auto 0.5rem auto;
-    width: 50%;
-    border: 3px solid #f6464d;
+    text-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+    font-size: 20px;
+    border-radius: 10px;
+    background-color: #1170E4;
     color: white;
-    border-radius: 8px;
-    background: #f6464d;
-    text-align: center;
+    border: none;
+    padding: 0.5rem;
 }
 
-.center {
-    text-align: center;
-    margin: auto;
-}
-
-.icon {
-    cursor: pointer;
-}
-
-.box {
-    width: 50%;
-}
-
-ul {
-    list-style-position: inside;
+#submit-btn:disabled {
+    cursor: not-allowed;
+    background-color: gray;
 }

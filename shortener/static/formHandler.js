@@ -38,4 +38,9 @@ document.addEventListener("DOMContentLoaded", (event) => {
     //form.addEventListener("submit", (event) => {
     //    createUrl(event);
     //});
+
+    // Enable submission upon agreement to my tos muahaha
+    form.addEventListener("click", (event) => {
+        document.getElementById("submit-btn").disabled = !document.getElementById("confirm-checkbox").checked;
+    });
 });

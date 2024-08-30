@@ -7,12 +7,12 @@
 
 {% block content %}
     <h1>URL Shortener</h1>
-    <p>By Felix G. - Hosted with 💖 on <a href="https://hackclub.app">Nest</a></p>
+    <p>Free for anyone in Hack Club</p>
+    <p>Hosted with 💖 on <a href="https://hackclub.app">Nest</a></p>
 
     {% with messages = get_flashed_messages() %}
         {% if messages %}
         <ul class="error-flashes">
-            <p>Mission control, we have errors which need your attention!</p>
             {% for message in messages %}
                 <li>{{ message }}</li>
             {% endfor %}
@@ -32,6 +32,9 @@
             <input type="text" name="shortened-link-field" id="shortened-link-field" required>
         </div>
 
-        <input type="submit" value="Shorten my URL!" id="submit-btn">
+        <input type="checkbox" id="confirm-checkbox">
+        <label for="confirm-checkbox">I agree that I am using this service in <b>good faith</b> (otherwise you’ll make Orpheus sad)</label><br>
+
+        <input type="submit" value="Shorten my URL!" id="submit-btn" disabled>
     </form>
 {% endblock %}
