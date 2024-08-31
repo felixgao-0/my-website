@@ -12,9 +12,8 @@ ul {
     margin: auto;
 }
 
-/* Give the icon a pointer cursor, like a button */
-.icon {
-    cursor: pointer;
+.div-right {
+    margin-left: auto;
 }
 
 /* The styling for an input group, like in bootstrap! */
@@ -26,8 +25,10 @@ ul {
 
 .text-box {
     border: 1px solid black;
-    border-radius: 10px;
     height: 1.5rem;
+    border-radius: 5px;
+    padding: 4px 2px;
+    box-sizing: border-box;
 }
 
 .form-item {
@@ -38,11 +39,33 @@ ul {
     width: 50%;
 }
 
+.gray-box {
+    border-radius: 5px;
+    padding: 5px 5px;
+    background-color: lightgray;
+    display: flex;
+    align-items: center;
+}
+
 .error-box {
     display: flex;
     align-items: center;
     gap: 3px;
     color: red;
+}
+
+.hide * {
+    /* Hide all items in a div with this class */
+    display: none;
+}
+
+/* Give the icon a pointer cursor, like a button */
+.icon {
+    cursor: pointer;
+}
+
+.bottom-padding {
+    padding-bottom: 4rem;
 }
 
 #create-url {
@@ -53,11 +76,6 @@ ul {
 
 #confirm-checkbox {
     margin-bottom: 0.5rem;
-}
-
-#original-link-field {
-    padding: 2px 2px;
-    box-sizing: border-box;
 }
 
 #submit-btn {

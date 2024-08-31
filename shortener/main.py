@@ -66,27 +66,27 @@ def _api_url_creator():
 
     # Checks go burr
     if new_url is None or old_url is None:
-        flask.flash("HQ, we're missing data! Make a Github Issue to have this fixed or try again.")
+        return flask.abort(500) # noooo
 
     forbidden_url_paths = ["api", "analytics", "analytic", "admin", "login", "dashboard", "settings", "manage"]
     if new_url.lower() in forbidden_url_paths:
-        flask.flash("That shortened URL path is reserved!")
+        flask.flash("That shortened URL path is reserved!", "shortened-link-error")
         error_state = True
 
     if not re.compile(r'^[a-zA-Z0-9-_]+$').match(new_url):
-        flask.flash("Whoops! The URL can only contain alphanumeric characters, dashes, and underscores.")
+        flask.flash("Whoops! The URL can only contain alphanumeric characters, dashes, and underscores.", "shortened-link-error")
         error_state = True
 
     if len(new_url) > 15:
-        flask.flash("Woah wheres the end? The shortened URL path is too long.")
+        flask.flash("Woah wheres the end? The shortened URL path is too long.", "shortened-link-error")
         error_state = True
 
     if isinstance(validators.url(old_url), validators.utils.ValidationError):
-        flask.flash("That's an invalid URL. Does it start with https://?")
+        flask.flash("That's an invalid URL. Does it start with https://?", "original-link-error")
         error_state = True
 
     if db.check_url_exists("shortened_url", new_url):
-        flask.flash("Sorry, that shortened URL has already been taken! Our database hates twins.")
+        flask.flash("Sorry, that shortened URL has already been taken! Our database hates twins.", "shortened-link-error")
         error_state = True
 
     if error_state:
