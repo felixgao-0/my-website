@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 
 import psycopg  # PostgreSQL db driver v3
 
@@ -49,18 +50,21 @@ class Database:
         """
         Fetch URL data from the database
         """
-        self.cur.execute(f"SELECT * FROM URLs WHERE shortened_url = '{shortened_url}';")
+        self.cur.execute(f"SELECT * FROM URLs WHERE shortened_url = %s;", (shortened_url,))
         return self.cur.fetchall()
 
 
-    def get_analytics(self, analytics_url: str) -> list:
+    def get_analytics(self, analytics_url: str) -> Optional[list]:
         """
         Fetch analytics data from the database
         """
-        self.cur.execute(f"SELECT * FROM URLs WHERE analytics_url = '{analytics_url}';")
-        url_id = self.cur.fetchall()[0][0] # Get url_id so search with on Analytics table
+        self.cur.execute(f"SELECT * FROM URLs WHERE analytics_url = %s", (analytics_url,))
+        url_table = self.cur.fetchall()
+        if not url_table:
+            return None
+        url_id = url_table[0][0] # Get url_id so search with on Analytics table
 
-        self.cur.execute(f"SELECT * FROM Analytics WHERE url_id = '{url_id}';")
+        self.cur.execute(f"SELECT * FROM Analytics WHERE url_id = %s", (url_id,))
         return self.cur.fetchall()
 
 
@@ -70,8 +74,8 @@ class Database:
         """
         self.cur.execute(f"""
         INSERT INTO URLs (original_url, shortened_url, analytics_url) 
-        VALUES ('{original_url}', '{shortened_url}', '{analytics_url}');
-        """)
+        VALUES (%s, %s, %s)
+        """, (original_url, shortened_url, analytics_url))
         self.conn.commit()
 
 
@@ -81,8 +85,8 @@ class Database:
         """
         self.cur.execute(f"""
         INSERT INTO Analytics (url_id, referrer, user_agent)
-        VALUES ('{url_id}', '{referrer}', '{user_agent}');
-        """)
+        VALUES  (%s, %s, %s)
+        """, (url_id, referrer, user_agent))
         self.conn.commit()
 
 
@@ -90,7 +94,7 @@ class Database:
         """
         Checks if a table item already exists
         """
-        self.cur.execute(f"SELECT COUNT(*) FROM URLs where {table_item} = '{table_value}';")
+        self.cur.execute(f"SELECT COUNT(*) FROM URLs where %s = %s", (table_item, table_value))
         result = self.cur.fetchall()
 
         if result[0][0] > 1:
