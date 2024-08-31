@@ -22,18 +22,20 @@
 
     <form method="POST" action="{{ url_for('_api_url_creator') }}" id="create-url-form" class="center box">
         <div class="form-item">
-            <label for="original-link-field">URL to redirect to:</label><br>
+            <label for="original-link-field" class="left-align">URL to redirect to:</label>
             <input type="text" name="original-link-field" id="original-link-field" class="form-item" required>
         </div><br>
 
-        <label for="shortened-link-field">URL will become:</label><br>
+        <label for="shortened-link-field" class="left-align">URL will become:</label>
         <div class="input-group">
             <p>url.felixgao.dev/u/</p>
             <input type="text" maxlength="15" name="shortened-link-field" id="shortened-link-field" class="form-item" required>
-        </div>
+        </div><br><br>
 
-        <input type="checkbox" id="confirm-checkbox">
-        <label for="confirm-checkbox">I agree that I am using this service in <b>good faith</b> (otherwise you’ll make Orpheus sad)</label><br>
+        <div class="left-align">
+            <input type="checkbox" id="confirm-checkbox">
+            <label for="confirm-checkbox">I agree that I am using this service in <b>good faith</b> (otherwise you’ll make Orpheus sad)</label>
+        </div>
 
         <input type="submit" value="Shorten my URL!" id="submit-btn" disabled>
     </form>

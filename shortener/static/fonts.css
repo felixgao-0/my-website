@@ -10,4 +10,5 @@ p, li, th, label, span {
     font-optical-sizing: auto;
     font-weight: 400;
     font-style: normal;
+    margin: 0.2rem 0;
 }

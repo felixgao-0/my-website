@@ -2,6 +2,11 @@ ul {
     list-style-position: inside;
 }
 
+.left-align {
+    text-align: left;
+    display: block;
+}
+
 .center {
     text-align: center;
     margin: auto;
@@ -34,7 +39,7 @@ ul {
 }
 
 #confirm-checkbox {
-    margin-bottom: 2rem;
+    margin-bottom: 0.5rem;
 }
 
 #original-link-field {
@@ -57,4 +62,5 @@ ul {
 #submit-btn:disabled {
     cursor: not-allowed;
     background-color: gray;
+    transition: background-color 0.2s ease-in-out;
 }
