@@ -16,6 +16,9 @@
     {% block head %}{% endblock %}
 </head>
 <body>
+<noscript>
+    <p class="error-box"><b>Woah there!</b> We kinda need javascript back here! This stuff isn't magic and requests are send via JS for validation. I promise 0 trackers (Not smart enough to try)!</p>
+</noscript>
     <div id="content" class="center">
         {% block content %}{% endblock %}
     </div>

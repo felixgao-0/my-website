@@ -16,22 +16,7 @@ function createUrl(event) {
 
     console.log("Validating data before submitting form :D")
 
-    // This regex matches dashes, underscores, numbers and letters only
-    let newUrlRegex = /^[a-zA-Z0-9-_]+$/;
-
-    if (!originalUrl.value.startsWith("https://") || !originalUrl.value.startsWith("http://")) {
-        // TODO: Present error to user :noo:
-
-    } else if (!isValidUrl(originalUrl.value)) {
-        // TODO: Present error to user :noo:
-    }
-
-    if (!newUrlRegex.test(newUrl.value)) {
-        // TODO: Present error to user :noo:
-
-    } else if (newUrl.value.length > 15) {
-        // TODO: Present error to user :noo:
-    }
+    // TODO FOR LATER (lol): Redo form submission :sob:
 
     document.getElementById("create-url-form").submit();
 }

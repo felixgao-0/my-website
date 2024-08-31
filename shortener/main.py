@@ -69,31 +69,48 @@ def _api_url_creator():
 
     # Checks go burr
     if new_url is None or old_url is None:
-        return flask.abort(400) # HTTP 400 = no data D:
+        return {
+            "status": "Ahh, mission control we're missing data somehow. Make a github issue abt this and Felix will fix this (maybe).",
+            "type": "shortened-link-error"
+        }, 400
 
     forbidden_url_paths = ["api", "analytics", "analytic", "admin", "login", "dashboard", "settings", "manage"]
     if new_url.lower() in forbidden_url_paths:
-        flask.flash("That shortened URL path is reserved!", "shortened-link-error")
-        error_state = True
+        return {
+            "status": "Woah area 51 documents! That shortened URL path is reserved!",
+            "type": "shortened-link-error"
+        }, 400
 
     elif not re.compile(r'^[a-zA-Z0-9-_]+$').match(new_url):
-        flask.flash("Whoops! The URL can only contain alphanumeric characters, dashes, and underscores.", "shortened-link-error")
-        error_state = True
+        return {
+            "status": "Whoops! The URL can only contain alphanumeric characters, dashes, and underscores.",
+            "type": "shortened-link-error"
+        }, 400
 
     elif len(new_url) > 15:
-        flask.flash("Woah wheres the end? The shortened URL path is too long.", "shortened-link-error")
-        error_state = True
+        return {
+            "status": "Woah wheres the end? The shortened URL path is too long.",
+            "type": "shortened-link-error"
+        }, 400
 
     elif db.check_url_exists("shortened_url", new_url):
-        flask.flash("Sorry, that shortened URL has already been taken! Our database hates twins.", "shortened-link-error")
-        error_state = True
+        return {
+            "status": "Sorry, that shortened URL has already been taken! Our database hates twins.",
+            "type": "shortened-link-error"
+        }, 400
 
-    if isinstance(validators.url(old_url), validators.utils.ValidationError):
-        flask.flash("That's an invalid URL. Does it start with https://?", "original-link-error")
-        error_state = True
+    if not (old_url.startswith("https://") or old_url.startswith("http://")):
+        return {
+            "status": "The shortened URL should start with http:// or https://, or else our db explodes /hj.",
+            "type": "shortened-link-error"
+        }, 400
 
-    if error_state:
-        return flask.redirect(flask.url_for('landing_page'))
+
+    elif isinstance(validators.url(old_url), validators.utils.ValidationError):
+        return {
+            "status": "That's an invalid URL. Pls check again",
+            "type": "original-link-error"
+        }, 400
 
     while True:
         analytics_url = "".join(
