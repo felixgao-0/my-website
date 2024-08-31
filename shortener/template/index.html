@@ -13,7 +13,8 @@
     {% with messages = get_flashed_messages() %}
         {% if messages %}
         <ul class="error-flashes">
-            {% for message in messages %}
+        {# TODO: maybe stop using flash? #}
+            {% for category, message in messages %}
                 <li>{{ message }}</li>
             {% endfor %}
         </ul>
@@ -23,20 +24,29 @@
     <form method="POST" action="{{ url_for('_api_url_creator') }}" id="create-url-form" class="center box">
         <div class="form-item">
             <label for="original-link-field" class="left-align">URL to redirect to:</label>
-            <input type="text" name="original-link-field" id="original-link-field" class="form-item" required>
+            <input type="text" name="original-link-field" id="original-link-field" class="form-item text-box" required>
+        </div>
+        <div class="error-box left-align">
+            <span class="material-symbols-outlined">error</span>
+            <p id="original-link-error">Test error</p>
         </div><br>
 
         <label for="shortened-link-field" class="left-align">URL will become:</label>
         <div class="input-group">
             <p>url.felixgao.dev/u/</p>
-            <input type="text" maxlength="15" name="shortened-link-field" id="shortened-link-field" class="form-item" required>
-        </div><br><br>
+            <input type="text" maxlength="15" name="shortened-link-field" id="shortened-link-field" class="form-item text-box" required>
+        </div>
+        <div class="error-box left-align">
+            <span class="material-symbols-outlined">error</span>
+            <p id="shortened-link-error">Test error</p>
+        </div>
+        <br><br>
 
         <div class="left-align">
             <input type="checkbox" id="confirm-checkbox">
             <label for="confirm-checkbox">I agree that I am using this service in <b>good faith</b> (otherwise you’ll make Orpheus sad)</label>
         </div>
 
-        <input type="submit" value="Shorten my URL!" id="submit-btn" disabled>
+        <input type="submit" value="Shorten my URL!" id="submit-btn" class="form-item" disabled>
     </form>
 {% endblock %}

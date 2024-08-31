@@ -17,13 +17,19 @@ function createUrl(event) {
     console.log("Validating data before submitting form :D")
 
     // This regex matches dashes, underscores, numbers and letters only
-    let newUrlRegex = /^[a-zA-Z0-9_-]+$/;
+    let newUrlRegex = /^[a-zA-Z0-9-_]+$/;
 
-    if  (!isValidUrl(originalUrl.value)) {
+    if (!originalUrl.value.startsWith("https://") || !originalUrl.value.startsWith("http://")) {
+        // TODO: Present error to user :noo:
+
+    } else if (!isValidUrl(originalUrl.value)) {
         // TODO: Present error to user :noo:
     }
 
-    if  (!newUrlRegex.test(newUrl.value)) {
+    if (!newUrlRegex.test(newUrl.value)) {
+        // TODO: Present error to user :noo:
+
+    } else if (newUrl.value.length > 15) {
         // TODO: Present error to user :noo:
     }
 
@@ -35,11 +41,11 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
     const form = document.getElementById("create-url-form");
 
-    //form.addEventListener("submit", (event) => {
-    //    createUrl(event);
-    //});
+    form.addEventListener("submit", (event) => {
+        createUrl(event);
+    });
 
-    // Enable submission upon agreement to my tos muhaha
+    // Enable submission upon agreement to my tos hehe
     form.addEventListener("click", (event) => {
         document.getElementById("submit-btn").disabled = !document.getElementById("confirm-checkbox").checked;
     });

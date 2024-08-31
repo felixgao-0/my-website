@@ -24,12 +24,25 @@ ul {
     justify-content: center;
 }
 
+.text-box {
+    border: 1px solid black;
+    border-radius: 10px;
+    height: 1.5rem;
+}
+
 .form-item {
     width: 100%;
 }
 
 .box {
     width: 50%;
+}
+
+.error-box {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    color: red;
 }
 
 #create-url {
@@ -45,10 +58,10 @@ ul {
 #original-link-field {
     padding: 2px 2px;
     box-sizing: border-box;
-    margin-bottom: 2rem;
 }
 
 #submit-btn {
+    cursor: pointer;
     text-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
     font-size: 20px;

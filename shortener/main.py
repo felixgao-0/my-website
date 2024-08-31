@@ -73,8 +73,8 @@ def _api_url_creator():
         flask.flash("That shortened URL path is reserved!")
         error_state = True
 
-    if not re.compile(r'^[a-zA-Z0-9]+$').match(new_url):
-        flask.flash("Whoops! The URL can only contain alphanumeric characters.")
+    if not re.compile(r'^[a-zA-Z0-9-_]+$').match(new_url):
+        flask.flash("Whoops! The URL can only contain alphanumeric characters, dashes, and underscores.")
         error_state = True
 
     if len(new_url) > 15:
