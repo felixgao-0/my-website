@@ -1,11 +1,14 @@
 h1 {
-    font-family: "Roboto", sans-serif;
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
     font-weight: 500;
     font-style: normal;
 }
 
 p, li, th, label, span {
-    font-family: "Roboto", sans-serif;
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
     font-weight: 400;
     font-style: normal;
+    margin: 0.2rem 0;
 }

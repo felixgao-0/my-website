@@ -7,31 +7,43 @@
 
 {% block content %}
     <h1>URL Shortener</h1>
-    <p>By Felix G. - Hosted with 💖 on <a href="https://hackclub.app">Nest</a></p>
+    <p>Free for anyone in Hack Club</p>
+    <p>Hosted with 💖 on <a href="https://hackclub.app">Nest</a></p>
 
-    <div id="create-url">
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <ul class="error-flashes">
-            <p>Mission control, we have errors which need your attention!</p>
-            {% for message in messages %}
-                <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-    {% endwith %}
-
-        <form method="POST" action="{{ url_for('_api_url_creator') }}" id="create-url-form" class="center">
-            <label for="original-link-field">URL to redirect to:</label><br>
-            <input type="text" name="original-link-field" id="original-link-field" required><br>
-
-            <label for="shortened-link-field">URL will become:</label><br>
-            <div class="input-group center">
-                <p>url.felixgao.dev/u/</p>
-                <input type="text" name="shortened-link-field" id="shortened-link-field" required>
-            </div>
-
-            <input type="submit" value="Shorten my URL!" id="submit-btn">
-        </form>
+    <div class="center box">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="error-box left-align center">
+                        <span class="material-symbols-outlined">error</span>
+                        <p id="shortened-link-error">{{ message }}</p>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
     </div>
+    <form method="POST" action="{{ url_for('_api_url_creator') }}" id="create-url-form" class="center box">
+        <div class="form-item">
+            <label for="original-link-field" class="left-align">URL to redirect to:</label>
+            <input type="text" name="original-link-field" id="original-link-field" class="form-item text-box" required>
+        </div>
+        <div class="error-box left-align hide">
+            <span class="material-symbols-outlined">error</span>
+            <p id="original-link-error"></p>
+        </div><br>
+
+        <label for="shortened-link-field" class="left-align">URL will become:</label>
+        <div class="form-item input-group">
+            <p>url.felixgao.dev/u/</p>
+            <input type="text" maxlength="15" name="shortened-link-field" id="shortened-link-field" class="form-item text-box" required>
+        </div>
+        <br><br>
+
+        <div class="left-align">
+            <input type="checkbox" id="confirm-checkbox">
+            <label for="confirm-checkbox">I agree that I am using this service in <b>good faith</b> (otherwise you’ll make Orpheus sad)</label>
+        </div>
+
+        <input type="submit" value="Shorten my URL!" id="submit-btn" class="form-item" disabled>
+    </form>
 {% endblock %}

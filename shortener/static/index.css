@@ -1,27 +1,10 @@
-#create-url {
-    border: gray solid;
-    border-radius: 10px;
-    width: 90%;
+ul {
+    list-style-position: inside;
 }
 
-#submit-btn {
-    margin-bottom: 15px;
-}
-
-.input-group {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.error-flashes {
-    margin: 0.5rem auto 0.5rem auto;
-    width: 50%;
-    border: 3px solid #f6464d;
-    color: white;
-    border-radius: 8px;
-    background: #f6464d;
-    text-align: center;
+.left-align {
+    text-align: left;
+    display: block;
 }
 
 .center {
@@ -29,10 +12,86 @@
     margin: auto;
 }
 
+.div-right {
+    margin-left: auto;
+}
+
+/* The styling for an input group, like in bootstrap! */
+.input-group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.text-box {
+    border: 1px solid black;
+    height: 1.5rem;
+    border-radius: 5px;
+    padding: 4px 2px;
+    box-sizing: border-box;
+}
+
+.form-item {
+    width: 100%;
+}
+
+.box {
+    width: 50%;
+}
+
+.gray-box {
+    border-radius: 5px;
+    padding: 5px 5px;
+    background-color: lightgray;
+    display: flex;
+    align-items: center;
+}
+
+.error-box {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    color: red;
+}
+
+.hide * {
+    /* Hide all items in a div with this class */
+    display: none;
+}
+
+/* Give the icon a pointer cursor, like a button */
 .icon {
     cursor: pointer;
 }
 
-ul {
-    list-style-position: inside;
+.bottom-padding {
+    padding-bottom: 4rem;
+}
+
+#create-url {
+    border: gray solid;
+    border-radius: 10px;
+    width: 90%;
+}
+
+#confirm-checkbox {
+    margin-bottom: 0.5rem;
+}
+
+#submit-btn {
+    cursor: pointer;
+    text-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+    font-size: 20px;
+    border-radius: 10px;
+    background-color: #1170E4;
+    color: white;
+    border: none;
+    padding: 0.5rem;
+}
+
+#submit-btn:disabled {
+    cursor: not-allowed;
+    background-color: gray;
+    transition: background-color 0.2s ease-in-out;
 }
