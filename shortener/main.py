@@ -27,11 +27,6 @@ def landing_page():
     return flask.render_template("index.html")
 
 
-@app.route('/test')
-def test_page_lol():
-    return str(db.get_analytics("test5"))
-
-
 @app.route('/analytics/<analytics_path>')
 def analytics(analytics_path):
     result = db.get_analytics(analytics_path)
