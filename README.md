@@ -11,7 +11,7 @@ Hosted on Nest! Nest is a free website host run by Hack Club! Free for anyone un
 
 Just this repo ig, I'm not cloning yet from this repo but will soon! I'm working on an SSH github action to push this repo to Nest.
 
-## Features & Pages
+## Features, Pages & Utils I built
 <details>
 <summary>Nest Resource Monitor (https://monitor.felixgao.dev)</summary>
 <br>
@@ -34,4 +34,10 @@ A simple URL converter. Functional but not pretty.
 A simple URL shortener to shorten all your life problems!
 
 Add the URL you want to shorten in the first field. Ensure it starts with https:// (this is a limitation of the URL validator used and seems to be required to redirect w/ flask anwyays). Then add the URL you want to convert into. The host is already filled out (As seen in the screenshot) so just add the end bit lol. The converted URL can **only contain** alphanumeric characters.
+</details>
+
+<details>
+<summary>Systemd process creator script</summary>
+<br>
+WIP
 </details>
