@@ -10,6 +10,18 @@
     <p>Free for anyone in Hack Club</p>
     <p>Hosted with 💖 on <a href="https://hackclub.app">Nest</a></p>
 
+    <div class="center box">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="error-box left-align center">
+                        <span class="material-symbols-outlined">error</span>
+                        <p id="shortened-link-error">{{ message }}</p>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
     <form method="POST" action="{{ url_for('_api_url_creator') }}" id="create-url-form" class="center box">
         <div class="form-item">
             <label for="original-link-field" class="left-align">URL to redirect to:</label>
@@ -24,10 +36,6 @@
         <div class="form-item input-group">
             <p>url.felixgao.dev/u/</p>
             <input type="text" maxlength="15" name="shortened-link-field" id="shortened-link-field" class="form-item text-box" required>
-        </div>
-        <div class="error-box left-align hide">
-            <span class="material-symbols-outlined">error</span>
-            <p id="shortened-link-error"></p>
         </div>
         <br><br>
 
