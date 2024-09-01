@@ -29,7 +29,7 @@ View a functional demo here at https://replit.com/@CoolDude9000/Nest-Website, or
 <br>
 A simple URL converter. Functional but not pretty.
 
-![image](https://github.com/user-attachments/assets/96a16e55-0ede-43f6-8827-35929eefd5d3)
+![image](https://github.com/user-attachments/assets/ab75a1e4-5a3a-4b99-bb23-f006e4ce01f5)
 
 A simple URL shortener to shorten all your life problems!
 
