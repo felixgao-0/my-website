@@ -22,7 +22,14 @@
 .nix-profile
 .profile
 .python_history
+.forward
+.ssh/
 
-# Env + git
+# Env & git
 .env
 .gitconfig
+.forward
+
+# Mail
+Mail/
+sent/
