@@ -5,11 +5,17 @@ import string
 import re
 import requests
 
+from dotenv import load_dotenv
 import validators
 from flask import Flask, request
 import flask
 
 import database
+import utils
+
+# Load my .env file :)
+load_dotenv()
+
 
 app = Flask(
     'app', 
@@ -20,7 +26,7 @@ app = Flask(
 app.secret_key = os.environ['FLASK_SECRET_KEY']
 
 db = database.Database()
-
+virus_checker = utils.CheckViruses()
 
 @app.route('/')
 def landing_page():
@@ -80,6 +86,10 @@ def _api_url_creator():
         flask.flash("Please check the human verification below and complete it if not already done.", "global-error")
         return flask.redirect(flask.url_for('landing_page'))
 
+
+    if virus_checker.check_viruses(old_url): # Block shortening attempts which may be viruses
+        flask.flash("This link can't be shortened because it may be malicious.", "original-link-error")
+        return flask.redirect(flask.url_for('landing_page'))
 
     forbidden_url_paths = ["api", "analytics", "analytic", "admin", "login", "dashboard", "settings", "manage"]
     if new_url.lower() in forbidden_url_paths:
