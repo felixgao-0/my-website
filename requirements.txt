@@ -2,3 +2,6 @@ psutil
 flask
 psycopg
 validators
+qrcode
+requests
+python-dotenv
