@@ -3,7 +3,7 @@ import os
 import random
 import string
 import re
-from calendar import error
+import requests
 
 from dotenv import load_dotenv
 import validators
@@ -67,10 +67,25 @@ def _api_url_creator():
     error_state = False
     new_url = request.form.get("shortened-link-field")
     old_url = request.form.get("original-link-field")
+    turnstile_key = request.form.get("cf-turnstile-response")
 
     # Checks go burr
-    if new_url is None or old_url is None:
-        return flask.abort(400) # HTTP 400 = no data D:
+    if new_url is None or old_url is None or turnstile_key is None:
+        return flask.abort(400) # HTTP 400 = missing data D:
+
+    # Validate turnstile key
+    data = {
+        "secret": os.environ['TURNSTILE_SECRET'],
+        "response": turnstile_key
+    }
+    r = requests.post("https://challenges.cloudflare.com/turnstile/v0/siteverify", data=data)
+    r.raise_for_status()  # Raise an error for bad responses (4xx and 5xx)
+    result = r.json()
+
+    if not result["success"]:
+        flask.flash("Please check the human verification below and complete it if not already done.", "global-error")
+        return flask.redirect(flask.url_for('landing_page'))
+
 
     if virus_checker.check_viruses(old_url): # Block shortening attempts which may be viruses
         flask.flash("This link can't be shortened because it may be malicious.", "original-link-error")

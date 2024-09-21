@@ -1,6 +1,9 @@
 {% extends "layout.html" %}
 
 {% block head %}
+    <!-- Turnstile (basically a captcha) -->
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
     <script src="{{ url_for('static', filename='formHandler.js') }}"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
 {% endblock %}
@@ -38,6 +41,8 @@
             <input type="text" maxlength="15" name="shortened-link-field" id="shortened-link-field" class="form-item text-box" required>
         </div>
         <br><br>
+
+        <div class="cf-turnstile" data-sitekey="0x4AAAAAAAih_9a4nppTrGVp"></div><br>
 
         <div class="left-align">
             <input type="checkbox" id="confirm-checkbox">
