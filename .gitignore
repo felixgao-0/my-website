@@ -24,11 +24,13 @@
 .python_history
 .forward
 .ssh/
+**/__pycache__/
 
-# Env & git
+# Env, venv & git
 .env
 .gitconfig
 .forward
+venv/*
 
 # Mail
 Mail/
