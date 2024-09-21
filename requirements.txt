@@ -2,3 +2,4 @@ psutil
 flask
 psycopg
 validators
+requests
