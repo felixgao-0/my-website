@@ -11,9 +11,13 @@
 # Cache files + .config files unrelated to systemd
 .cache/*
 
+!.config/
+
 .config/*
-!.config/systemd/*
-!.config/systemd/user/*
+!.config/systemd/
+
+.config/systemd/*
+!.config/systemd/user/
 
 # Idk what these are but we don't need to track em
 .face
