@@ -8,8 +8,12 @@
 .bashrc
 .psql_history
 
-# Cache files
+# Cache files + .config files unrelated to systemd
 .cache/*
+
+.config/*
+!.config/systemd/
+!.config/systemd/user/
 
 # Idk what these are but we don't need to track em
 .face
