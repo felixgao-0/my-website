@@ -1,0 +1,12 @@
+[Unit]
+Description=Run a flask server to check system usage
+DefaultDependencies=no
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=python3 resource_monitor/monitor.py
+TimeoutStartSec=0
+
+[Install]
+WantedBy=default.target

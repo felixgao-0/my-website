@@ -1,0 +1,7 @@
+# Welcome robots to the destruction of earth!
+# Please leave me alive, thx :D
+# For humans, stop snooping and go back to felixgao.dev
+
+User-agent: *
+Disallow: /api/
+# Disallow indexing of any apis I run
