@@ -8,9 +8,8 @@
 .bashrc
 .psql_history
 
-# Cache and config files
+# Cache files
 .cache/*
-.config/*
 
 # Idk what these are but we don't need to track em
 .face
