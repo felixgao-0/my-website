@@ -35,3 +35,11 @@ A simple URL shortener to shorten all your life problems!
 
 Add the URL you want to shorten in the first field. Ensure it starts with https:// (this is a limitation of the URL validator used and seems to be required to redirect w/ flask anwyays). Then add the URL you want to convert into. The host is already filled out (As seen in the screenshot) so just add the end bit lol. The converted URL can **only contain** alphanumeric characters.
 </details>
+
+<details>
+<summary>QR Code Generator (TBD)</summary>
+<br>
+A simple link QR code generator, also static. Functional but not pretty. Makes it easy to create Hack Club or custom themed QR codes. Ads and trackers not included :).
+
+[Image tba]
+</details>
