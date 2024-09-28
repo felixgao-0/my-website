@@ -14,5 +14,12 @@ http://monitor.felixgao.hackclub.app, http://monitor.felixgao.dev {
 	bind unix/.monitor.webserver.sock|777
 	bind unix/.monitor.felixgao.dev.webserver.sock|777
 
-	reverse_proxy :57583
+	reverse_proxy :33925
+}
+
+http://url.felixgao.dev, http://url.dino.icu {
+	bind unix/.url.dino.icu.webserver.sock|777
+	bind unix/.url.felixgao.dev.webserver.sock|777
+
+	reverse_proxy :34191
 }
