@@ -1,0 +1,57 @@
+body {
+    margin: 5px 5px;
+}
+
+.gallery {
+    display: flex;
+    margin-top: 5px;
+    margin-bottom: 20px;
+}
+
+.gallery-item {
+    width: 8rem;
+    height: 8rem;
+
+    aspect-ratio: 1 / 1;
+
+    border: 2px solid blue;
+    border-radius: 5px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background-color: white;
+
+    margin-right: 2rem;
+}
+
+.gallery-item img {
+    max-width: 90%;
+    height: auto;
+}
+
+img.smaller {
+    max-width: 80% !important;
+}
+
+.hidden {
+    display: none;
+}
+
+.margin-10-top {
+    margin-top: 10px;
+}
+
+.margin-5-sides {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.margin-0-top {
+    margin-top: 0;
+}
+
+#qr-code {
+    margin: 2rem 1rem;
+}
