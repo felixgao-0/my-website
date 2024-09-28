@@ -123,4 +123,8 @@ def data_pid():
     return stats
 
 
+<<<<<<< Updated upstream
 app.run(host='localhost', port=int(os.environ['PORT_RESOURCE_MONITOR']), debug=global_utils.get_debug_mode())
+=======
+app.run(host='localhost', port=os.environ)
+>>>>>>> Stashed changes

@@ -1,0 +1,10 @@
+[Unit]
+Description=URL shortener for all things which must be shortened
+DefaultDependencies=no
+After=network-online.target
+[Service]
+Type=oneshot
+ExecStart=/home/felixgao/venv/bin/python3.11 shortener/main.py
+TimeoutStartSec=0
+[Install]
+WantedBy=default.target
