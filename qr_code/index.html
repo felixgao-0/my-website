@@ -35,50 +35,75 @@
         <label class="margin-10-top">Choose an (optional) image to add! Maybe make it Hack Club themed?</label>
 
         <div class="gallery">
-            <input type="radio" name="image" id="image-none" value="image-none" checked>
-            <label class="gallery-item" for="image-none" aria-label="Don't add an image to the QR code">
-                No Image
-            </label>
+            <div class="align-side">
+                <input type="radio" name="image" id="image-none" value="image-none" checked>
+                <label class="gallery-item" for="image-none" aria-label="Don't add an image to the QR code">
+                    No Image
+                </label>
+            </div>
 
-            <input type="radio" name="image" id="image1" value="image1">
-            <label class="gallery-item" for="image1" aria-label="Add a red flag with the Hack Club logo">
-                <img src="assets/flag-standalone.png" alt="">
-            </label>
+            <div class="align-side">
+                <input type="radio" name="image" id="image1" value="image1">
+                <label class="gallery-item" for="image1" aria-label="Add a red flag with the Hack Club logo">
+                    <img src="assets/flag-standalone.png" alt="">
+                </label>
+            </div>
 
-            <input type="radio" name="image" id="image2" value="image2">
-            <label class="gallery-item" for="image2" aria-label="Add a hand from the left holding a red flag with the Hack Club logo">
-                <img src="assets/flag-orpheus-left.png" alt="">
-            </label>
+            <div class="align-side">
+                <input type="radio" name="image" id="image2" value="image2">
+                <label class="gallery-item" for="image2" aria-label="Add a hand from the left holding a red flag with the Hack Club logo">
+                    <img src="assets/flag-orpheus-left.png" alt="">
+                </label>
+            </div>
 
-            <input type="radio" name="image" id="image3" value="image3">
-            <label class="gallery-item" for="image3" aria-label="Add a hand from the top holding a red flag with the Hack Club logo">
-                <img src="assets/flag-orpheus-top.png" alt="">
-            </label>
+            <div class="align-side">
+                <input type="radio" name="image" id="image3" value="image3">
+                <label class="gallery-item" for="image3" aria-label="Add a hand from the top holding a red flag with the Hack Club logo">
+                    <img src="assets/flag-orpheus-top.png" alt="">
+                </label>
+            </div>
 
-            <input type="radio" name="image" id="image4" value="image4">
-            <label class="gallery-item" for="image4" aria-label="Add a black flag with the Hack Club logo">
-                <img src="assets/flag-standalone-bw.png" alt="">
-            </label>
+            <div class="align-side">
+                <input type="radio" name="image" id="image4" value="image4">
+                <label class="gallery-item" for="image4" aria-label="Add a black flag with the Hack Club logo">
+                    <img src="assets/flag-standalone-bw.png" alt="">
+                </label>
+            </div>
 
-            <input type="radio" name="image" id="image5" value="image5">
-            <label class="gallery-item" for="image5" aria-label="Add a hand from the left holding a black flag with the Hack Club logo">
-                <img src="assets/flag-orpheus-left-bw.png" alt="">
-            </label>
+            <div class="align-side">
+                <input type="radio" name="image" id="image5" value="image5">
+                <label class="gallery-item" for="image5" aria-label="Add a hand from the left holding a black flag with the Hack Club logo">
+                    <img src="assets/flag-orpheus-left-bw.png" alt="">
+                </label>
+            </div>
 
-            <input type="radio" name="image" id="image6" value="image6">
-            <label class="gallery-item" for="image6" aria-label="Add a hand from the top holding a black flag with the Hack Club logo">
-                <img src="assets/flag-orpheus-top-bw.png" alt="">
-            </label>
+            <div class="align-side">
+                <input type="radio" name="image" id="image6" value="image6">
+                <label class="gallery-item" for="image6" aria-label="Add a hand from the top holding a black flag with the Hack Club logo">
+                    <img src="assets/flag-orpheus-top-bw.png" alt="">
+                </label>
+            </div>
 
-            <input type="radio" name="image" id="image7" value="image7">
-            <label class="gallery-item" for="image7" aria-label="Add a rounded pride-themed square Hack Club logo shown as the letter 'h">
-                <img src="assets/icon-progress-rounded.png" class="smaller" alt="">
-            </label>
+            <div class="align-side">
+                <input type="radio" name="image" id="image7" value="image7">
+                <label class="gallery-item" for="image7" aria-label="Add a rounded pride-themed square Hack Club logo shown as the letter 'h">
+                    <img src="assets/icon-progress-rounded.png" class="smaller" alt="">
+                </label>
+            </div>
 
-            <input type="radio" name="image" id="image8" value="image8">
-            <label class="gallery-item" for="image8" aria-label="Add a rounded red square Hack Club logo shown as the letter 'h'">
-                <img src="assets/icon-rounded.png" class="smaller" alt="">
-            </label>
+            <div class="align-side">
+                <input type="radio" name="image" id="image8" value="image8">
+                <label class="gallery-item" for="image8" aria-label="Add a rounded red square Hack Club logo shown as the letter 'h'">
+                    <img src="assets/icon-rounded.png" class="smaller" alt="">
+                </label>
+            </div>
+
+            <div class="align-side">
+                <input type="radio" name="image" id="image9" value="image9">
+                <label class="gallery-item" for="image9" aria-label="Add the Nest logo drawn as a bird in a Nest with its tail holding a red flag with the Hack Club logo shown as the letter 'h'">
+                    <img src="assets/nest.png" class="smaller" alt="">
+                </label>
+            </div>
         </div>
 
         <button onclick="generateQRCode()" class="button">Generate My QR Code!</button>

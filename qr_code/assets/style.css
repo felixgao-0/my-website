@@ -4,6 +4,8 @@ body {
 
 .gallery {
     display: flex;
+    flex-wrap: wrap;
+
     margin-top: 5px;
     margin-bottom: 20px;
 }
@@ -24,6 +26,7 @@ body {
     background-color: white;
 
     margin-right: 2rem;
+    margin-top: 2rem;
 }
 
 .gallery-item img {
@@ -37,6 +40,10 @@ img.smaller {
 
 .hidden {
     display: none;
+}
+
+.align-side {
+    display: inline-flex;
 }
 
 .margin-10-top {

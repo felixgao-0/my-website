@@ -9,7 +9,8 @@ const imageOptions = { // Mapping from radio btn values to filepaths
     "image5": "assets/flag-orpheus-left-bw.png",
     "image6": "assets/flag-orpheus-top-bw.png",
     "image7": "assets/icon-progress-rounded.png",
-    "image8": "assets/icon-rounded.png"
+    "image8": "assets/icon-rounded.png",
+    "image9": "assets/nest.png",
 }
 const imageSizingOptions = { // Mapping from radio btn values to image size
     "image-none": null, // n/a
@@ -20,7 +21,8 @@ const imageSizingOptions = { // Mapping from radio btn values to image size
     "image5": 0.6,
     "image6": 0.6,
     "image7": 0.8,
-    "image8": 0.8
+    "image8": 0.8,
+    "image9": 0.7,
 }
 let qrCode = null;
 
