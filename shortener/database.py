@@ -1,7 +1,7 @@
 from typing import Optional
 
 import psycopg  # PostgreSQL db driver v3
-
+from psycopg import sql
 
 # Note to self, database table formats :D
 """
@@ -85,7 +85,12 @@ class Database:
         """
         Checks if a table item already exists
         """
-        self.cur.execute(f"SELECT COUNT(*) FROM URLs where {table_item} = %s", (table_value,))
+
+        query = sql.SQL("SELECT COUNT(*) FROM URLs WHERE {} = %s").format(
+            sql.Identifier(table_item)
+        )
+
+        self.cur.execute(query, (table_value,))
         result = self.cur.fetchall()
 
         if result[0][0] > 1:
