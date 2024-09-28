@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>QR Code Generator</title>
+
+    <!-- Framework for QR code generation // https://github.com/davidshimjs/qrcodejs -->
+    <script type="text/javascript" src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
+    <script src="assets/generation.js"></script>
+
+    <link rel="stylesheet" href="assets/hack_club_theme.css"> <!-- Hackclub theme :yay: -->
+    <link rel="stylesheet" href="assets/style.css">
+
+</head>
+<body>
+    <h1>QR Code Generator</h1>
+
+    <p>Need a shortened URL with analytics? Check out <a href="https://url.felixgao.dev">url.felixgao.dev</a>!</p>
+
+    <div class="card sunken">
+        <label for="url-field">URL or text to convert</label>
+        <input type="text" id="url-field">
+        <p><b>Tip: </b>Start your URL with https:// so devices will recognize it as a link!</p>
+
+
+        <label for="error-correction">Error correction level</label>
+        <select id="error-correction">
+            <option value="L">Low</option>
+            <option value="M" selected="selected">Medium (Default)</option>
+            <option value="Q">Quartile</option>
+            <option value="H">High</option>
+        </select>
+        <p><b>Tip: </b>Set a higher level (Quartile/High) if you want to print this outside, where the QR code will take damage from the outdoors. Set a lower level if you need the QR code to be small for some reason (Low). Keep it normal otherwise (Medium) :).</p>
+
+        <label class="margin-10-top">Choose an (optional) image to add! Maybe make it Hack Club themed?</label>
+
+        <div class="gallery">
+            <input type="radio" name="image" id="image-none" value="image-none" checked>
+            <label class="gallery-item" for="image-none" aria-label="Don't add an image to the QR code">
+                No Image
+            </label>
+
+            <input type="radio" name="image" id="image1" value="image1">
+            <label class="gallery-item" for="image1" aria-label="Add a red flag with the Hack Club logo">
+                <img src="assets/flag-standalone.png" alt="">
+            </label>
+
+            <input type="radio" name="image" id="image2" value="image2">
+            <label class="gallery-item" for="image2" aria-label="Add a hand from the left holding a red flag with the Hack Club logo">
+                <img src="assets/flag-orpheus-left.png" alt="">
+            </label>
+
+            <input type="radio" name="image" id="image3" value="image3">
+            <label class="gallery-item" for="image3" aria-label="Add a hand from the top holding a red flag with the Hack Club logo">
+                <img src="assets/flag-orpheus-top.png" alt="">
+            </label>
+
+            <input type="radio" name="image" id="image4" value="image4">
+            <label class="gallery-item" for="image4" aria-label="Add a black flag with the Hack Club logo">
+                <img src="assets/flag-standalone-bw.png" alt="">
+            </label>
+
+            <input type="radio" name="image" id="image5" value="image5">
+            <label class="gallery-item" for="image5" aria-label="Add a hand from the left holding a black flag with the Hack Club logo">
+                <img src="assets/flag-orpheus-left-bw.png" alt="">
+            </label>
+
+            <input type="radio" name="image" id="image6" value="image6">
+            <label class="gallery-item" for="image6" aria-label="Add a hand from the top holding a black flag with the Hack Club logo">
+                <img src="assets/flag-orpheus-top-bw.png" alt="">
+            </label>
+
+            <input type="radio" name="image" id="image7" value="image7">
+            <label class="gallery-item" for="image7" aria-label="Add a rounded pride-themed square Hack Club logo shown as the letter 'h">
+                <img src="assets/icon-progress-rounded.png" class="smaller" alt="">
+            </label>
+
+            <input type="radio" name="image" id="image8" value="image8">
+            <label class="gallery-item" for="image8" aria-label="Add a rounded red square Hack Club logo shown as the letter 'h'">
+                <img src="assets/icon-rounded.png" class="smaller" alt="">
+            </label>
+        </div>
+
+        <button onclick="generateQRCode()" class="button">Generate My QR Code!</button>
+    </div>
+
+    <div id="qr-code">
+        <!-- placehold.co is a placeholder image for when a qr code isn't generated yet -->
+        <img src="https://placehold.co/300/ff8c37/000000?text=Your%20QR%20Code\nwill%20appear%20here%20:)" alt="">
+    </div>
+
+    <div class="download">
+        <button onclick="downloadQRCode({'extension': 'png'})" class="button outline margin-5-sides hidden">Download as PNG</button>
+        <button onclick="downloadQRCode({'extension': 'svg'})" class="button outline margin-5-sides hidden">Download as SVG</button>
+    </div>
+
+    <p>QR Codes aren't stored/processed/sold to Google, this website is completely static! :yay:</p>
+
+</body>
+</html>
