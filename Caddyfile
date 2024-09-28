@@ -4,7 +4,7 @@
 http://felixgao.hackclub.app, http://felixgao.dev {
 	bind unix/.webserver.sock|777
 	bind unix/.felixgao.dev.webserver.sock|777
-	root * /home/felixgao/pub
+	root * /home/felixgao/main
 	file_server {
 		hide .git .env README.md
 	}
