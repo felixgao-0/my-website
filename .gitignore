@@ -36,7 +36,6 @@
 # Env, venv & git
 .env
 .gitconfig
-.forward
 venv/*
 
 # Mail

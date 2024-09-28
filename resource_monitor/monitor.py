@@ -12,7 +12,7 @@ import flask
 
 from dotenv import load_dotenv
 
-import global_utils
+#import global_utils
 
 #from flask_socketio import SocketIO
 
@@ -123,4 +123,4 @@ def data_pid():
     return stats
 
 
-app.run(host='localhost', port=int(os.environ['PORT_RESOURCE_MONITOR']), debug=global_utils.get_debug_mode())
+app.run(host='localhost', port=int(os.environ['PORT_RESOURCE_MONITOR']), debug=False)

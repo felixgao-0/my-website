@@ -13,7 +13,7 @@ import flask
 import database
 import utils
 
-import global_utils
+#import global_utils
 
 # Load my .env file :)
 load_dotenv()
@@ -144,4 +144,4 @@ def _api_url_creator():
 # Close the database on code end
 atexit.register(lambda: db.close())
 
-app.run(host='0.0.0.0', port=int(os.environ['PORT_URL_SHORTENER']), debug=global_utils.get_debug_mode())
+app.run(host='0.0.0.0', port=int(os.environ['PORT_URL_SHORTENER']), debug=False)
