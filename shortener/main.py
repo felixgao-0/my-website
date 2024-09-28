@@ -39,7 +39,7 @@ virus_checker = utils.CheckViruses()
 
 @app.route('/')
 def landing_page():
-    return flask.render_template("index.html")
+    return flask.render_template("index.html", cf_sitekey=os.environ['TURNSTILE_SITEKEY'])
 
 
 @app.route('/analytics/<analytics_path>')
@@ -143,4 +143,5 @@ def _api_url_creator():
 # Close the database on code end
 atexit.register(lambda: db.close())
 
-app.run(host='0.0.0.0', port=int(os.environ['PORT_URL_SHORTENER']), debug=False)
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=int(os.environ['PORT_URL_SHORTENER']), debug=False)

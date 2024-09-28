@@ -4,6 +4,7 @@
 http://felixgao.hackclub.app, http://felixgao.dev {
 	bind unix/.webserver.sock|777
 	bind unix/.felixgao.dev.webserver.sock|777
+
 	root * /home/felixgao/main
 	file_server {
 		hide .git .env README.md
@@ -22,4 +23,13 @@ http://url.felixgao.dev, http://url.dino.icu {
 	bind unix/.url.felixgao.dev.webserver.sock|777
 
 	reverse_proxy :34191
+}
+
+http://qr.felixgao.dev {
+    bind unix/.qr.felixgao.dev.webserver.sock|777
+
+    root * /home/felixgao/qr_code
+    file_server {
+    	hide .git .env README.md
+    }
 }
