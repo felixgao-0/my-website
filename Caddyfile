@@ -1,5 +1,5 @@
 {
-	admin off
+	admin unix//home/felixgao/caddy-admin.sock
 }
 http://felixgao.hackclub.app, http://felixgao.dev {
 	bind unix/.webserver.sock|777
