@@ -18,11 +18,10 @@ import utils
 # Load my .env file :)
 load_dotenv()
 
-
 app = Flask(
     'app', 
-    template_folder="template/",
-    static_folder='static/'
+    template_folder="shortener/template/",
+    static_folder="shortener/static/"
 )
 
 app.secret_key = os.environ['FLASK_SECRET_KEY']
