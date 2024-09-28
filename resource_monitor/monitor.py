@@ -10,7 +10,14 @@ import psutil
 from flask import Flask
 import flask
 
+from dotenv import load_dotenv
+
+import global_utils
+
 #from flask_socketio import SocketIO
+
+# Load my .env file :)
+load_dotenv()
 
 app = Flask(
     'app', 
@@ -116,4 +123,4 @@ def data_pid():
     return stats
 
 
-app.run(host='localhost', port=57583, debug=False)
+app.run(host='localhost', port=int(os.environ['PORT_RESOURCE_MONITOR']), debug=global_utils.get_debug_mode())

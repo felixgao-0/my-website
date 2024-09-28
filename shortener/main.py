@@ -13,6 +13,8 @@ import flask
 import database
 import utils
 
+import global_utils
+
 # Load my .env file :)
 load_dotenv()
 
@@ -25,7 +27,15 @@ app = Flask(
 
 app.secret_key = os.environ['FLASK_SECRET_KEY']
 
-db = database.Database()
+conn_params = {
+    "dbname": "felixgao_url_shortener",
+    "user": "felixgao",
+    "password": os.environ['DB_PASSWORD'],
+    "host": "hackclub.app",
+    "port": "5432"
+}
+
+db = database.Database(conn_params)
 virus_checker = utils.CheckViruses()
 
 @app.route('/')
@@ -134,4 +144,4 @@ def _api_url_creator():
 # Close the database on code end
 atexit.register(lambda: db.close())
 
-app.run(host='0.0.0.0', port=8080, debug=True)
+app.run(host='0.0.0.0', port=int(os.environ['PORT_URL_SHORTENER']), debug=global_utils.get_debug_mode())

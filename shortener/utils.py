@@ -4,6 +4,11 @@ import os
 import qrcode
 import requests
 
+from dotenv import load_dotenv
+
+
+# Load my .env file :)
+load_dotenv()
 
 def create_qr_code(url: str):
     qr = qrcode.QRCode(

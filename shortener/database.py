@@ -1,16 +1,7 @@
-import os
 from typing import Optional
 
 import psycopg  # PostgreSQL db driver v3
 
-
-conn_params = {
-    "dbname": "felixgao_url_shortener",
-    "user": "felixgao",
-    "password": os.environ['DB_PASSWORD'],
-    "host": "hackclub.app",
-    "port": "5432"
-}
 
 # Note to self, database table formats :D
 """
@@ -26,7 +17,7 @@ felixgao_url_shortener=> SELECT * FROM Analytics;
 """
 
 class Database:
-    def __init__(self):
+    def __init__(self, conn_params):
         print("Database opened")
         self.conn = psycopg.connect(**conn_params)
         self.cur = self.conn.cursor()
