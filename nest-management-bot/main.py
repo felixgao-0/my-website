@@ -7,8 +7,12 @@ from dotenv import load_dotenv
 
 # Local environment BUGFIX: I can't figure out why but ig im missing some cert files lol
 # might be unneeded for others
-# TODO: REMOVE IN PROD
+# TODO: REMOVE IN PROD, prob
 import certifi
+
+import database
+import views.home as home
+
 os.environ['SSL_CERT_FILE'] = certifi.where()
 
 load_dotenv()
@@ -20,5 +24,16 @@ app = App(
     signing_secret=os.environ["SLACK_MANAGEMENT_SIGNING_SECRET"]
 )
 
+me = os.environ['MY_SLACK_ID']
+
+@app.event("app_home_opened")
+def update_home_tab(client, event):
+    if event['user'] != me:
+        home.generate_unauthorized(client, event)
+
+    #if event['user']
+    #home.generate_unauthorized(client, event)
+
+
 if __name__ == "__main__":
-    app.start(port=int(os.environ.get("PORT", 8000)))
+    app.start(port=8000)
