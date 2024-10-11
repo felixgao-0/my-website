@@ -38,6 +38,9 @@
 .gitconfig
 venv/*
 
+# Secret keys
+*.pem
+
 # Mail
 Mail/
 sent/
