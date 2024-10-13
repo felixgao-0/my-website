@@ -1,6 +1,7 @@
 import asyncio
 import json
 import ssl
+import socket
 from typing import Literal, Optional
 
 from websockets.asyncio.server import serve
@@ -50,8 +51,6 @@ async def server(websocket):
 
         await websocket.send(json.dumps({'status': 'info', 'message': 'Authenticated :D'}))
 
-        # End client authentication :D
-
         # Add client to list to use for sending messages later
         clients[f'{websocket.id}']: websocket = websocket
         print("ACTIVE CLIENTS:", clients.keys())
@@ -78,8 +77,11 @@ async def server(websocket):
     except websockets.exceptions.ConnectionClosed as e:
         print(f"Connection closed: {e}")
     finally:
-        clients.pop(f'{websocket.id}')
-        print("ACTIVE CLIENTS:", clients.keys())
+        if clients.get(websocket.id):
+            clients.pop(f'{websocket.id}')
+            print("ACTIVE CLIENTS:", clients.keys())
+        else:
+            print('Client was not added to dict :/')
 
 
 async def send_message(message: str, user_uuid: str, *, message_type: Literal['info', 'command']) -> Optional[dict]:
@@ -104,6 +106,18 @@ async def send_message(message: str, user_uuid: str, *, message_type: Literal['i
             return response
         else:
             await send_error(await clients[f'{user_uuid}'], 'Invalid Response type', possible=False)
+
+
+def ident_request(local_port, remote_port):
+    try:
+        with socket.create_connection(('localhost', 113), timeout=10) as sock:
+            query = f"{local_port}, {remote_port}\r\n"
+            sock.sendall(query.encode())
+
+            response = sock.recv(1024).decode().strip()
+            return response
+    except Exception as e:
+        return f"Error: {e}"
 
 
 async def main():
