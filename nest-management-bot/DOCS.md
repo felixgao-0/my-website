@@ -1,16 +1,17 @@
 # Nest Management Bot
 Websocket Docs
 
-wip docs, all items inside are subject to change. Some doc items are for whats planned and haven't been fully implemented yet
+wip docs, all items inside are subject to change. Some doc items are for what's planned and haven't been fully implemented yet
 
 
 ## Websocket Docs
 ### Message Syntax
-All messages have a status and message:
+All messages have a status, message, and unix timestamp (for debugging):
 ```json
 {
   "status": "info",
-  "message": "example message to send"
+  "message": "example message to send",
+  "timestamp": 13695504934
 }
 ```
 
@@ -29,7 +30,8 @@ Command responses and commands can also include a payload item with anything ins
   "payload": {
     "success": false,
     "reason": "I skipped the sponsor segment lol"
-  }
+  },
+  "timestamp": 13695504934
 }
 ```
 Commands may have a payload in cases where more specific info is needed
@@ -39,7 +41,8 @@ Commands may have a payload in cases where more specific info is needed
   "message": "obtain_process_info",
   "payload": {
     "pid": "43235" // PID of process to manage
-  }
+  },
+  "timestamp": 13695504934
 }
 ```
 
@@ -57,8 +60,9 @@ Commands can have the following message text:
 To connect fully, the client needs to send the following message
 ```json
 {
-  "version": "0.1.0a"
+  "version": "0.1.0a",
   // Client version, used to avoid issues with old code
+  "timestamp": 13695504934
 }
 ```
 
@@ -66,6 +70,7 @@ The server will verify the data sent and then either disconnect the client if th
 ```json
 {
   "status": "info",
-  "message": "Authenticated :D"
+  "message": "Authenticated :D",
+  "timestamp": 13695504934
 }
 ```
