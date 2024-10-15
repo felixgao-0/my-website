@@ -6,12 +6,20 @@ wip docs, all items inside are subject to change. Some doc items are for what's 
 
 ## Websocket Docs
 ### Message Syntax
-All messages have a status, message, and unix timestamp (for debugging):
+All messages have a status, along with a message or payload:
 ```json
 {
   "status": "info",
-  "message": "example message to send",
-  "timestamp": 13695504934
+  "message": "example message to send"
+}
+```
+or...
+```json
+{
+  "status": "command_response",
+  "payload": {
+    "data": [1, 2, 3, 4, 5]
+  }
 }
 ```
 
@@ -19,6 +27,7 @@ The following are valid status types:
 - `info`
 - `command`
 - `command_response`
+- `command_response_error`
 - `warning`
 - `error`
 
@@ -28,10 +37,8 @@ Command responses and commands can also include a payload item with anything ins
   "status": "command_response",
   "message": "response_download_raid_shadow_legends",
   "payload": {
-    "success": false,
-    "reason": "I skipped the sponsor segment lol"
-  },
-  "timestamp": 13695504934
+    "example_data": "pls i downloaded, let my family go :sob:"
+  }
 }
 ```
 Commands may have a payload in cases where more specific info is needed
@@ -40,9 +47,8 @@ Commands may have a payload in cases where more specific info is needed
   "status": "command",
   "message": "obtain_process_info",
   "payload": {
-    "pid": "43235" // PID of process to manage
-  },
-  "timestamp": 13695504934
+    "pid": 43235
+  }
 }
 ```
 
@@ -53,16 +59,19 @@ Commands can have the following message text:
 - `kill_process`
 - `restart_process`*
 - `start_process`*
+- `exec_command`
 
-*Makes use of systemd
+*Makes use of systemd (tbd)
 
 ### Connecting:
 To connect fully, the client needs to send the following message
 ```json
 {
-  "version": "0.1.0a",
-  // Client version, used to avoid issues with old code
-  "timestamp": 13695504934
+  "status": "let_me_in_pls",
+  "message": "let me in! :D",
+  "payload": {
+    "version": "0.1.0a"
+  }
 }
 ```
 
@@ -70,7 +79,6 @@ The server will verify the data sent and then either disconnect the client if th
 ```json
 {
   "status": "info",
-  "message": "Authenticated :D",
-  "timestamp": 13695504934
+  "message": "Authenticated :D"
 }
 ```
