@@ -9,17 +9,6 @@ from typing import Optional
 import psycopg  # PostgreSQL db driver v3
 from psycopg import sql
 
-"""
-felixgao_url_shortener=> SELECT * FROM URLs;
- id | original_url | shortened_url | analytics_url 
-----+--------------+---------------+---------------
-(0 rows)
-
-felixgao_url_shortener=> SELECT * FROM Analytics;
- id | url_id | created_at | referrer | user_agent 
-----+--------+------------+----------+------------
-(0 rows)
-"""
 
 class Database:
     def __init__(self, conn_params):
