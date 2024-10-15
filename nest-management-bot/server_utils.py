@@ -1,0 +1,106 @@
+"""
+All the utilities used by server.py to make life easier lol
+"""
+import hashlib
+import secrets
+import json
+import socket
+from typing import Optional
+
+clients = {}
+
+
+class ClientError(Exception):
+    pass
+
+
+async def send_message(message: str, user_uuid: str) -> None:
+    """
+    Send a message to the client
+    :param message: The message to send
+    :param user_uuid: The client to send a message to
+    :return:
+    """
+    await clients[user_uuid].send(json.dumps({'status': 'info', 'message': message}))
+
+
+async def send_command(message: str, user_uuid: str) -> Optional[dict]:
+    """
+    Send a command to the client
+    :param message: The message to send
+    :param user_uuid: The client to send a message to
+    :return: The client's response to the command
+    """
+    await clients[user_uuid].send(json.dumps({'status': 'command', 'message': message}))
+    response_json = await clients[user_uuid].recv()
+
+    try:
+        response = json.loads(response_json)
+    except json.decoder.JSONDecodeError:
+        await send_error(await clients[f'{user_uuid}'], 'Invalid Response', possible=False)
+        return
+
+    if response.get('status') == 'command_response':
+        return response
+    elif response.get('status') == 'error':
+        raise ClientError(response.get('message'))
+    else:
+        await send_error(await clients[f'{user_uuid}'], 'Invalid Response type', possible=False)
+
+
+async def send_error(error_msg, user_uuid: str, *, possible=False, disconnect=True) -> None:
+    """
+    Send an error to the client
+    :param error_msg: The error to send
+    :param user_uuid: The client to send a message to
+    :param possible: If this error is possible with a correct client
+    :param disconnect: Disconnect the server after the error message is sent
+    :return:
+    """
+    await clients[user_uuid].send(json.dumps(
+        {
+            'message': f'{error_msg}{' This shouldn\'t happen, send a message in #slack-management-bot for help.' if not possible else ''}',
+            'status': 'error'
+        }
+    ))
+    if disconnect:
+        await clients[user_uuid].close()
+
+
+
+def ident_request(local_port, remote_port) -> str:
+    """
+    Send an ident request to identify the user from a websocket port
+    :param local_port:
+    :param remote_port:
+    :return: Username of websocket client
+    """
+    with socket.create_connection(('localhost', 113), timeout=10) as sock:
+        query = f"{local_port}, {remote_port}\r\n"
+        sock.sendall(query.encode())
+
+        response = sock.recv(1024).decode().strip()
+        return response
+
+
+# Generate_token() and verify_token_checksum() might not end up being used, but im saving the code snippets for now
+
+def generate_token() -> str:
+    raw_token = secrets.token_hex(32)
+
+    checksum = hashlib.sha256(raw_token.encode()).hexdigest()[:8]
+    opaque_token = f"{raw_token}.{checksum}"
+
+    return opaque_token
+
+
+def verify_token_checksum(token: str) -> bool:
+    if len(token) != 73: # Token must be 73 chars long
+        return False
+
+    raw_token = token[:-9] # Obtain raw token, minus the seperator
+    checksum = token[-8:] # Obtain checksum
+
+    expected_checksum = hashlib.sha256(raw_token.encode()).hexdigest()[:8]
+
+    return expected_checksum == checksum
