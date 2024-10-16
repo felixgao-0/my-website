@@ -3,11 +3,14 @@ Database for handling random things which need to be stored
 
 WIP, borrowed from my url shortener, will modify but don't know whats gonna be stored yet
 """
-
+import re
 from typing import Optional
 
-import psycopg  # PostgreSQL db driver v3
-from psycopg import sql
+import psycopg # PostgreSQL db driver v3
+
+
+class DuplicateKey(Exception):
+    pass
 
 
 class Database:
@@ -31,30 +34,34 @@ class Database:
             self.conn.close()
 
 
-    def get_analytics(self, analytics_url: str) -> Optional[list]:
+    def get_user(self, *, token: Optional[str] = None, slack_id: Optional[str] = None) -> Optional[list]:
         """
-        Fetch analytics data from the database
+        Get a user from database with either token or slack user_id
         """
-        self.cur.execute("SELECT * FROM URLs WHERE analytics_url = %s", (analytics_url,))
-        url_table = self.cur.fetchall()
-        if not url_table:
+        if token and slack_id:
+            return ValueError('Cannot fill in token and user_id. What was the point? You already have all the info!')
+        elif token:
+            self.cur.execute("SELECT * FROM Users WHERE token = %s", (token,))
+        elif slack_id:
+            self.cur.execute("SELECT * FROM Users WHERE slack_id = %s", (slack_id,))
+
+        user = self.cur.fetchall()
+        if not user:
             return None
-        url_id = url_table[0][0] # Get url_id so search with on Analytics table
-
-        self.cur.execute("SELECT * FROM Analytics WHERE url_id = %s", (url_id,))
-        return self.cur.fetchall()
+        return user[0]
 
 
-    def add_analytics(self, url_id: int, referrer: str, user_agent: str) -> None:
+    def add_user(self, slack_id: str, token: str) -> None:
         """
-        Creates a database entry for analytics
+        Adds a user to the database
         """
-        self.cur.execute("""
-        INSERT INTO Analytics (url_id, referrer, user_agent)
-        VALUES  (%s, %s, %s)
-        """, (url_id, referrer, user_agent))
-        self.conn.commit()
-
-
-if __name__ == "__main__":
-    ...
+        try:
+            self.cur.execute("""
+                INSERT INTO Users (token, slack_id)
+                VALUES  (%s, %s)""", (token, slack_id)
+            )
+        except psycopg.errors.UniqueViolation as error:
+            # Rollback changes, D:
+            self.conn.rollback()
+        else:
+            self.conn.commit()
