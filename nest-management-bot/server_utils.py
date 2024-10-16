@@ -67,7 +67,7 @@ async def send_error(error_msg, user_uuid: str, *, possible=False, disconnect=Tr
         await clients[user_uuid].close()
 
 
-
+# Wip; not using rn, might later
 def ident_request(local_port, remote_port) -> str:
     """
     Send an ident request to identify the user from a websocket port
@@ -83,24 +83,39 @@ def ident_request(local_port, remote_port) -> str:
         return response
 
 
-# Generate_token() and verify_token_checksum() might not end up being used, but im saving the code snippets for now
-
 def generate_token() -> str:
+    """
+    Generates a token to be used for authenication
+    :return: A token
+    """
     raw_token = secrets.token_hex(32)
 
     checksum = hashlib.sha256(raw_token.encode()).hexdigest()[:8]
-    opaque_token = f"{raw_token}.{checksum}"
+    final_token = f"{raw_token}.{checksum}"
 
-    return opaque_token
+    # Sanity Check
+    if verify_token_checksum(final_token):
+        return final_token
+    else:
+        raise Exception("How on earth do you generate a token invalid? :heavysob:")
 
 
 def verify_token_checksum(token: str) -> bool:
+    """
+    Verifies the checksum of a token
+    :param token: The token to verify
+    :return: Weather the checksum is valid
+    """
     if len(token) != 73: # Token must be 73 chars long
         return False
 
-    raw_token = token[:-9] # Obtain raw token, minus the seperator
+    raw_token = token[:-9] # Obtain raw token, minus the seperator (.)
     checksum = token[-8:] # Obtain checksum
 
     expected_checksum = hashlib.sha256(raw_token.encode()).hexdigest()[:8]
 
     return expected_checksum == checksum
+
+
+if __name__ == "__main__":
+    print(generate_token())
