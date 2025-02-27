@@ -1,11 +1,12 @@
 # My Website
 It's my website, my little corner of the internet!
 
-## Hosting
+---
+<img src='https://cloud-5m1ov7a6b-hack-club-bot.vercel.app/0flag-standalone__3_.png' width="150px">
 
-Find my site here: (TODO: Add URL me)
+This project was made possible by [Hack Club](https://hackclub.com/), a nonprofit which helps teens learn to code and ship cool projects by providing physical goodies, [an epic community](https://hackclub.com/slack/) (teens-only), and more! This project made use [Nest](https://hackclub.app/), a free server run by Hack Club. Thank you :).
 
-Hosted on Nest! Nest is a free server run by Hack Club! Free for anyone under 18, anywhere, everywhere. Learn more about [Nest](https://hackclub.app/) here and Hack Club [here](https://hackclub.com/).
+---
 
 ## Cool things I've Built
 <details>
