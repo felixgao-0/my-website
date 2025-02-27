@@ -2,7 +2,7 @@ function Home() {
     return (
         <>
         <div class='h-screen px-10 py-10 flex flex-col justify-between'>
-            <img class="w-full h-auto object-cover" src='/cs_ottawa.png' alt='A photo of counterspell ottawa'></img>
+            <img class="w-full h-auto object-cover" src='https://cdn.hack.ngo/slackcdn/b39fe366ffa0ccdca5ce8b1ddda8aaf0.png' alt='A photo of counterspell ottawa'></img>
             <div class='apx-10 py-10 flex flex-col justify-between'>
             <h2 class='text-4xl text-white'>Hello! 👋</h2>
             <h1 class='text-5xl text-white'>I’m Felix, a <span class='text-amber-400'>Hack Clubber</span>.</h1>
