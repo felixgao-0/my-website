@@ -34,6 +34,10 @@ body {
   height: auto;
 }
 
+.gallery-item.selected-item {
+  border: 2px solid green !important;
+}
+
 img.smaller {
   max-width: 80% !important;
 }

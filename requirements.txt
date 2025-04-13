@@ -7,3 +7,5 @@ requests
 python-dotenv
 websockets
 slack_bolt
+redis
+Flask-Limiter
