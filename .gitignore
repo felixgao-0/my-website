@@ -33,7 +33,13 @@
 .ssh/
 **/__pycache__/
 .idea # intellij nonsense
-**/node_modules/** */ # HELP WHAT IS THIS DOIN? WHY IS IT SO BIG LOL
+
+# HELP WHAT IS THIS DOIN? WHY IS IT SO BIG LOL
+# defeat the node_modules/
+node_modules/**
+**/node_modules/**
+# be banished forever, for your existence curses my git
+
 
 # Env, venv & git
 .env
