@@ -33,7 +33,7 @@
 .ssh/
 **/__pycache__/
 .idea # intellij nonsense
-**/node_modules/ # HELP WHAT IS THIS DOIN? WHY IS IT SO BIG LOL
+**/node_modules/** */ # HELP WHAT IS THIS DOIN? WHY IS IT SO BIG LOL
 
 # Env, venv & git
 .env
