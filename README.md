@@ -1,5 +1,12 @@
-# My Website
+# [DEPRECATED] My Website
 It's my website, my little corner of the internet!
+
+> [!IMPORTANT]
+> This repo is being **deprecated** as I build new, cooler projects and learn how to deploy them properly in new cool ways!
+> 
+> You can find some of my new projects at ...
+> - [`felixgao-0/site`](https://github.com/felixgao-0/site)
+
 
 ---
 <img src='https://cloud-5m1ov7a6b-hack-club-bot.vercel.app/0flag-standalone__3_.png' width="150px">
