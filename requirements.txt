@@ -7,3 +7,4 @@ requests
 python-dotenv
 websockets
 slack_bolt
+urllib3>=2.5.0 # not directly required, pinned by Snyk to avoid a vulnerability
