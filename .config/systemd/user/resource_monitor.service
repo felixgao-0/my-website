@@ -1,11 +1,12 @@
 [Unit]
 Description=Run a flask server to check system usage
 DefaultDependencies=no
-After=network-online.target
+After=network-online.target redis.service
+Requires=redis.service
 
 [Service]
 Type=oneshot
-ExecStart=python3 resource_monitor/monitor.py
+ExecStart=/usr/bin/python3 resource_monitor/monitor.py
 TimeoutStartSec=0
 
 [Install]

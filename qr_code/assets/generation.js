@@ -28,6 +28,35 @@ const imageSizingOptions = {
 };
 let qrCode = null;
 
+function updateSelectedIndicator() {
+  const allItems = document.querySelectorAll(".gallery-item");
+  allItems.forEach((item) => {
+    item.classList.remove("selected-item");
+  });
+
+  const checkedRadio = document.querySelector(
+    '.gallery input[name="image"]:checked',
+  );
+  if (checkedRadio) {
+    const checkedLabel = document.querySelector(
+      `label[for="${checkedRadio.id}"]`,
+    );
+    checkedLabel.classList.add("selected-item");
+  }
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  const radioButtons = document.querySelectorAll(
+    '.gallery input[name="image"]',
+  );
+  radioButtons.forEach((radio) => {
+    radio.addEventListener("change", updateSelectedIndicator);
+  });
+
+  // Initialize with the default selection from HTML
+  updateSelectedIndicator();
+});
+
 function generateQRCode() {
   // Checks
   if (document.getElementById("url-field").value === "") {
@@ -50,7 +79,9 @@ function generateQRCode() {
   });
 
   // Get selected background image
-  const radioImageOptions = document.querySelectorAll('.gallery input[name="image"]');
+  const radioImageOptions = document.querySelectorAll(
+    '.gallery input[name="image"]',
+  );
 
   let qrImage = null;
   let qrImageSizing = null;
